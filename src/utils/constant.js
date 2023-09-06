@@ -1,0 +1,19 @@
+const STATUS_CODES = {
+	CREATED: 201,
+	SUCCESS: 200,
+	REDIRECT: 302,
+	BAD_REQUEST: 400,
+	UN_AUTHORIZED: 401,
+	NOT_FOUND: 404,
+	SERVER_ERROR: 500
+}
+
+const TYPES = {
+	SUCCESS: 'success',
+	ERROR: 'error'
+}
+
+const SERVER_ERROR = 'Something went wrong.'
+const UN_AUTHORIZED_USER = 'Unauthorized user.'
+
+export { STATUS_CODES, TYPES, SERVER_ERROR, UN_AUTHORIZED_USER }

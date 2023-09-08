@@ -13,16 +13,9 @@ class AuthController {
 
     createUser = async (req, res) => {
 		try {
-			const { username, email, contact, password, confirm_password, ...body } =
-				req.body
+			const { username, email, contact, password, confirm_password, ...body } = req.body
 
-			const isAllFieldRequired = Helper.allFieldsAreRequired([
-				username,
-				email,
-				contact,
-				password,
-				confirm_password
-			])
+			const isAllFieldRequired = Helper.allFieldsAreRequired([ username, email, contact, password, confirm_password ])
 			if (isAllFieldRequired)
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
@@ -55,6 +48,7 @@ class AuthController {
 				password: await Bcrypt.hashPassword(password),
 				...body
 			})
+
 			const userData = await data.save()
 
 			return res.status(STATUS_CODES.CREATED).json(
@@ -79,7 +73,7 @@ class AuthController {
 		try {
 			const { email, password } = req.body
 
-			const isAllFieldRequired = Helper.allFieldsAreRequired([email, password])
+			const isAllFieldRequired = Helper.allFieldsAreRequired([ email, password ])
 			if (isAllFieldRequired)
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
@@ -124,6 +118,34 @@ class AuthController {
 					})
 				})
 			)
+		} catch (error) {
+			serverError(error, res)
+		}
+	}
+
+	resetPassword = async (req, res) => {
+		try {
+			const { old_password, new_password, confirm_password } = req.body
+			const { token } = req.headers
+
+			const isAllFieldRequired = Helper.allFieldsAreRequired([old_password, new_password, confirm_password])
+
+			if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+				response({
+					type: TYPES.ERROR,
+					message: 'All fields are required.'
+				})
+			)
+
+			if(confirm_password !== new_password) return res.status(STATUS_CODES.BAD_REQUEST).json(
+				response({
+					type: TYPES.ERROR,
+					message: 'password and confirm password does not matched.'
+				})
+			)
+
+			
+
 		} catch (error) {
 			serverError(error, res)
 		}

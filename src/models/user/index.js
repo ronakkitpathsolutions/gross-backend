@@ -22,7 +22,7 @@ const userSchema = new Schema({
 		default: 'user'
 	},
 	contact: {
-		type: Number,
+		type: String,
 		required: true,
 		trim: true
 	},

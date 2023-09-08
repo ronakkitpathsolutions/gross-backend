@@ -23,8 +23,7 @@ class App {
             })
     }
 
-    configureServer = () =>
-        new Promise((resolve) => {
+    configureServer = () => new Promise((resolve) => {
             const app = express()
             app.use(cors())
             app.use(express.json())
@@ -34,8 +33,7 @@ class App {
             resolve(app)
         })
 
-    startServer = (app) =>
-        new Promise((resolve) => {
+    startServer = (app) => new Promise((resolve) => {
             const port = process.env.PORT || 4000
             app.set(port)
             const server = http.createServer(app)

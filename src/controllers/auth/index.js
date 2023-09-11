@@ -143,8 +143,24 @@ class AuthController {
 					message: 'password and confirm password does not matched.'
 				})
 			)
-
 			
+			const userData = await JWT.verifyUserToken(token)
+			if(userData){
+				const id = userData?.user_id
+				const user = await User.findById(id)
+				if(!user) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+					type: TYPES.ERROR,
+					message: 'User not found.'
+				}))
+				const matched = await Bcrypt.matchPassword(old_password, user?.password)
+				if(!matched) return res.status(STATUS_CODES.BAD_REQUEST).json(
+					response({
+						type: TYPES.ERROR,
+						message: 'Invalid Old password.'
+					})
+				)
+
+			}
 
 		} catch (error) {
 			serverError(error, res)

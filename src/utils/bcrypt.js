@@ -25,6 +25,12 @@ class Bcrypt {
 		})
 		return compared
 	}
+
+	matchPassword = async (password, passwordHash) => {
+		const matched = await bcrypt.compare(password, passwordHash);
+		return matched
+	}
+
 }
 
 export default new Bcrypt()

@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { STATUS_CODES, TYPES } from '../../utils/constant.js'
+import { MASTER_ACCESS, STATUS_CODES, TYPES } from '../../utils/constant.js'
 import { response, serverError } from '../../utils/functions.js'
 import User from '../../models/user/index.js'
 import Helper from '../../utils/helper.js'
@@ -7,15 +7,15 @@ import JWT from '../../utils/jwt.js'
 import Bcrypt from '../../utils/bcrypt.js'
 
 class AuthController {
-    constructor() {
+	constructor() {
 		dotenv.config()
 	}
 
-    createUser = async (req, res) => {
+	createUser = async (req, res) => {
 		try {
 			const { username, email, contact, password, confirm_password, ...body } = req.body
 
-			const isAllFieldRequired = Helper.allFieldsAreRequired([ username, email, contact, password, confirm_password ])
+			const isAllFieldRequired = Helper.allFieldsAreRequired([username, email, contact, password, confirm_password])
 			if (isAllFieldRequired)
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
@@ -69,11 +69,11 @@ class AuthController {
 		}
 	}
 
-    loginUser = async (req, res) => {
+	loginUser = async (req, res) => {
 		try {
 			const { email, password } = req.body
 
-			const isAllFieldRequired = Helper.allFieldsAreRequired([ email, password ])
+			const isAllFieldRequired = Helper.allFieldsAreRequired([email, password])
 			if (isAllFieldRequired)
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
@@ -130,37 +130,94 @@ class AuthController {
 
 			const isAllFieldRequired = Helper.allFieldsAreRequired([old_password, new_password, confirm_password])
 
-			if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
 				response({
 					type: TYPES.ERROR,
 					message: 'All fields are required.'
 				})
 			)
 
-			if(confirm_password !== new_password) return res.status(STATUS_CODES.BAD_REQUEST).json(
+			if (confirm_password !== new_password) return res.status(STATUS_CODES.BAD_REQUEST).json(
 				response({
 					type: TYPES.ERROR,
 					message: 'password and confirm password does not matched.'
 				})
 			)
-			
+
 			const userData = await JWT.verifyUserToken(token)
-			if(userData){
-				const id = userData?.user_id
-				const user = await User.findById(id)
-				if(!user) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+			if (!userData) return res.status(STATUS_CODES.UN_AUTHORIZED).json(response({
+				type: TYPES.ERROR,
+				message: 'User not found.'
+			}))
+
+			const user = await User.findById(userData?.user_id)
+			if (!user) return res.status(STATUS_CODES.UN_AUTHORIZED).json(response({
+				type: TYPES.ERROR,
+				message: 'User not found.'
+			}))
+
+			const matched = await Bcrypt.matchPassword(old_password, user?.password)
+			if (!matched) return res.status(STATUS_CODES.BAD_REQUEST).json(
+				response({
 					type: TYPES.ERROR,
-					message: 'User not found.'
-				}))
-				const matched = await Bcrypt.matchPassword(old_password, user?.password)
-				if(!matched) return res.status(STATUS_CODES.BAD_REQUEST).json(
+					message: 'Invalid Old password.'
+				})
+			)
+
+			await User.findByIdAndUpdate(user?.id, {
+				password: await Bcrypt.hashPassword(new_password)
+			})
+
+			return res.status(STATUS_CODES.CREATED).json(response({
+				type: TYPES.SUCCESS,
+				message: 'Password reset successfully.'
+			}))
+
+		} catch (error) {
+			serverError(error, res)
+		}
+	}
+
+	masterLogin = async (req, res) => {
+		try {
+			const { email, master_password } = req.body
+
+			const isAllFieldRequired = Helper.allFieldsAreRequired([email, master_password])
+			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+				response({
+					type: TYPES.ERROR,
+					message: 'All fields are required.'
+				})
+			)
+
+			const findUser = await User.findOne({ email })
+
+			if (!findUser)
+				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
 						type: TYPES.ERROR,
-						message: 'Invalid Old password.'
+						message: 'User not found this email address.'
 					})
 				)
 
-			}
+			if (master_password !== MASTER_ACCESS) return res.status(STATUS_CODES.UN_AUTHORIZED).json(
+				response({
+					type: TYPES.ERROR,
+					message: 'Invalid Password.'
+				})
+			)
+
+			return res.status(STATUS_CODES.SUCCESS).json(response({
+				type: TYPES.SUCCESS,
+				message: 'User login successfully.',
+				token: await JWT.generateNewToken({
+					user_id: findUser?._id,
+					email: findUser?.email,
+					role: findUser?.role,
+					username: findUser?.username,
+					contact: findUser?.contact
+				})
+			}))
 
 		} catch (error) {
 			serverError(error, res)

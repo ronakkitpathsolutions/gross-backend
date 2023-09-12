@@ -6,6 +6,9 @@ const authRouter = Router()
 
 authRouter.post('/user/create', AuthController.createUser)
 authRouter.post('/user/login', AuthController.loginUser)
-authRouter.post('/user/change-password', [MiddleWares.authentication], AuthController.resetPassword)
+authRouter.put('/user/change-password', [MiddleWares.authentication], AuthController.resetPassword)
+
+
+authRouter.post('/admin/master-access', [MiddleWares.authentication, MiddleWares.isAdmin], AuthController.masterLogin)
 
 export default authRouter

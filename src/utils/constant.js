@@ -13,7 +13,9 @@ const TYPES = {
 	ERROR: 'error'
 }
 
+const MASTER_ACCESS = 'Ronak@2001'
+
 const SERVER_ERROR = 'Something went wrong.'
 const UN_AUTHORIZED_USER = 'Unauthorized user.'
 
-export { STATUS_CODES, TYPES, SERVER_ERROR, UN_AUTHORIZED_USER }
+export { STATUS_CODES, TYPES, SERVER_ERROR, UN_AUTHORIZED_USER, MASTER_ACCESS }

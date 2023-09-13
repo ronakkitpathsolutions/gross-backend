@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 import { Types } from 'mongoose'
-import { STATUS_CODES, TYPES, UN_AUTHORIZED_USER } from '../utils/constant.js'
+import { RESPONSE_MESSAGES, STATUS_CODES, TYPES, USER_ROLES } from '../utils/constant.js'
 import { response, serverError } from '../utils/functions.js'
 import JWT from '../utils/jwt.js'
 import User from '../models/user/index.js'
@@ -26,11 +26,11 @@ class MiddleWare {
 			if (!token)
 				res
 					.status(STATUS_CODES.UN_AUTHORIZED)
-					.json(response({ type: TYPES.ERROR, message: 'Provide token.' }))
+					.json(response({ type: TYPES.ERROR, message: RESPONSE_MESSAGES.PROVIDE_TOKEN }))
 			else if (await JWT.tokenExpired(token))
 				res
 					.status(STATUS_CODES.UN_AUTHORIZED)
-					.json(response({ type: TYPES.ERROR, message: 'Invalid token.' }))
+					.json(response({ type: TYPES.ERROR, message: RESPONSE_MESSAGES.INVALID_TOKEN }))
 			else next()
 		} catch (error) {
 			serverError(error, res)
@@ -46,7 +46,7 @@ class MiddleWare {
 				res.status(STATUS_CODES.UN_AUTHORIZED).json(
 					response({
 						type: TYPES.ERROR,
-						message: UN_AUTHORIZED_USER
+						message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
 					})
 				)
 			else next()
@@ -64,7 +64,7 @@ class MiddleWare {
 				res.status(STATUS_CODES.UN_AUTHORIZED).json(
 					response({
 						type: TYPES.ERROR,
-						message: UN_AUTHORIZED_USER
+						message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
 					})
 				)
 			else next()
@@ -81,11 +81,11 @@ class MiddleWare {
 			const verifiedUser = await JWT.verifyUserToken(token)
 			const findUser = await User.findById(verifiedUser?.user_id)
 
-			if (verifiedUser?.role !== 'admin' && findUser?._id?.toString() !== _id)
+			if (verifiedUser?.role !== USER_ROLES.ADMIN && findUser?._id?.toString() !== _id)
 				res.status(STATUS_CODES.UN_AUTHORIZED).json(
 					response({
 						type: TYPES.ERROR,
-						message: UN_AUTHORIZED_USER
+						message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
 					})
 				)
 			else return next()
@@ -106,7 +106,7 @@ class MiddleWare {
 				res.status(STATUS_CODES.UN_AUTHORIZED).json(
 					response({
 						type: TYPES.ERROR,
-						message: UN_AUTHORIZED_USER
+						message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
 					})
 				)
 			else return next()

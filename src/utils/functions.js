@@ -1,4 +1,4 @@
-import { SERVER_ERROR, STATUS_CODES, TYPES } from "./constant.js"
+import { RESPONSE_MESSAGES, STATUS_CODES, TYPES } from "./constant.js"
 
 const response = ({ type, error, data, message, ...fields }) => {
     const object = { type, error, data, message }
@@ -11,7 +11,7 @@ const response = ({ type, error, data, message, ...fields }) => {
 const serverError = (error, res) => res.status(STATUS_CODES.SERVER_ERROR).json(
     response({
         type: TYPES.ERROR,
-        message: error?.message || SERVER_ERROR
+        message: error?.message || RESPONSE_MESSAGES.SERVER_ERROR
     })
 )
 

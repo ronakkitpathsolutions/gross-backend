@@ -15,7 +15,16 @@ const TYPES = {
 
 const MASTER_ACCESS = 'Ronak@2001'
 
-const SERVER_ERROR = 'Something went wrong.'
-const UN_AUTHORIZED_USER = 'Unauthorized user.'
+const RESPONSE_MESSAGES = {
+	SERVER_ERROR: 'Something went wrong.',
+	UN_AUTHORIZED_USER: 'Unauthorized user.',
+	PROVIDE_TOKEN: 'Provide token.',
+	INVALID_TOKEN: 'Invalid token.'
+}
 
-export { STATUS_CODES, TYPES, SERVER_ERROR, UN_AUTHORIZED_USER, MASTER_ACCESS }
+const USER_ROLES = {
+	USER: 'user',
+	ADMIN: 'admin'
+}
+
+export { STATUS_CODES, TYPES, MASTER_ACCESS, RESPONSE_MESSAGES, USER_ROLES }

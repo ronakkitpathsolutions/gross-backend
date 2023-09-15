@@ -19,7 +19,8 @@ const RESPONSE_MESSAGES = {
 	SERVER_ERROR: 'Something went wrong.',
 	UN_AUTHORIZED_USER: 'Unauthorized user.',
 	PROVIDE_TOKEN: 'Provide token.',
-	INVALID_TOKEN: 'Invalid token.'
+	INVALID_TOKEN: 'Invalid token.',
+	NOT_FOUND: 'Data not found.'
 }
 
 const USER_ROLES = {

@@ -31,7 +31,27 @@ const userSchema = new Schema({
 		required: true,
 		trim: true,
 		minlength: 8
-	}
+	},
+	full_name: {
+        type: String,
+        default: null,
+		trim: true
+    },
+    profile : {
+        type: String,
+        default: null,
+        trim: true
+    },
+    gender : {
+        type: String,
+        default: null,
+        trim: true
+    },
+    DOB: {
+        type: Date,
+        default: null,
+        trim: true
+    }
 })
 
 export default mongoose.model('Users', userSchema)

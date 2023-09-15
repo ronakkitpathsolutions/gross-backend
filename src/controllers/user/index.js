@@ -10,8 +10,8 @@ class UserController {
 
     getUsers = async(req, res) => {
         try {
-            const users = await User.find({}).select({ password: 0, __v : 0 })
-            if(!users) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+            const users = await User.find({}).select({ password: 0, __v : 0, created_At: 0 })
+            if(!users) return res.status(STATUS_CODES.NOT_FOUND).json(response({
                 type: TYPES.ERROR,
                 data: [],
                 message: 'Not found.'
@@ -32,10 +32,11 @@ class UserController {
             const { _id } = req.params
             const user = await User.findById(_id).select({
                 __v: 0,
-                password: 0
+                password: 0,
+                created_At: 0
             })
 
-            if(!user) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+            if(!user) return res.status(STATUS_CODES.NOT_FOUND).json(response({
                 type: TYPES.ERROR,
                 message: 'Not found.',
                 user

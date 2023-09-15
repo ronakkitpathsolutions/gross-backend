@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import { MASTER_ACCESS, STATUS_CODES, TYPES } from '../../utils/constant.js'
+import { MASTER_ACCESS, RESPONSE_MESSAGES, STATUS_CODES, TYPES } from '../../utils/constant.js'
 import { response, serverError } from '../../utils/functions.js'
 import User from '../../models/user/index.js'
 import Helper from '../../utils/helper.js'
@@ -217,6 +217,67 @@ class AuthController {
 					username: findUser?.username,
 					contact: findUser?.contact
 				})
+			}))
+
+		} catch (error) {
+			serverError(error, res)
+		}
+	}
+
+	getProfile = async (req, res) => {
+		try {
+			const { _id } = req.params
+
+			const profile = await User.findById(_id).select({
+				__v: 0,
+				created_At: 0
+			})
+
+			if(!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
+				type: TYPES.ERROR,
+				message: RESPONSE_MESSAGES.NOT_FOUND
+			}))
+
+			return res.status(STATUS_CODES.SUCCESS).json(response({
+				type: TYPES.SUCCESS,
+				data: profile
+			}))
+
+		} catch (error) {
+			serverError(error, res)
+		}
+	}
+
+	updateProfile = async(req, res) => {
+		try {
+
+			const { full_name, DOB, gender, contact } = req.body
+			const { _id } = req.params
+
+			const isAllFieldRequired = Helper.allFieldsAreRequired([full_name, DOB, gender, contact])
+
+			if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+				type: TYPES.ERROR,
+				message: 'All fields are required.'
+			}))
+
+			const update = req.file ? { full_name, DOB, gender, contact, profile: req?.file?.location } : { full_name, DOB, gender, contact }
+			await User.findByIdAndUpdate(_id, update)
+
+			const profile = await User.findById(_id).select({
+				__v: 0,
+				created_At: 0,
+				password: 0
+			})
+
+			if(!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
+				type: TYPES.ERROR,
+				message: RESPONSE_MESSAGES.NOT_FOUND
+			}))
+
+			return res.status(STATUS_CODES.SUCCESS).json(response({
+				type: TYPES.SUCCESS,
+				data: profile
 			}))
 
 		} catch (error) {

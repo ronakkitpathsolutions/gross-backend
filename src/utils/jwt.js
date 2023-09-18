@@ -1,7 +1,6 @@
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import { USER_ROLES } from './constant.js'
-import { createObject } from './functions.js'
 
 
 class JWT {

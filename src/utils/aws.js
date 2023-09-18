@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 const s3 = new S3Client({
     credentials: {
         accessKeyId: process.env.ACCESS_KEY,
-        secretAccessKey: process.env.SECRET_KEY,
+        secretAccessKey: process.env.AWS_SECRET,
     },
     region: process.env.BUCKET_REGION,
 })

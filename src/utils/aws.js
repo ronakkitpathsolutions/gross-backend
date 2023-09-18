@@ -15,16 +15,18 @@ class AWS {
     constructor() {
         dotenv.config()
     }
-    S3 = multer({
-        storage: multerS3({
-            s3,
-            bucket: process.env.BUCKET_NAME || '',
-            acl: 'public-read',
-            contentType: multerS3.AUTO_CONTENT_TYPE,
-            metadata: (req, file, callback) => callback(null, { fieldName: file.originalname }),
-            key: (req, file, callback) => callback(null, file.originalname)
+    S3 = (folderPath = '') => {
+        return multer({
+            storage: multerS3({
+                s3,
+                bucket: process.env.BUCKET_NAME || '',
+                acl: 'public-read',
+                contentType: multerS3.AUTO_CONTENT_TYPE,
+                metadata: (req, file, callback) => callback(null, { fieldName: file.originalname }),
+                key: (req, file, callback) => callback(null, `${folderPath}/${file.originalname}`)
+            })
         })
-    })
+    }
 }
 
 export default new AWS()

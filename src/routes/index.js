@@ -1,7 +1,12 @@
 import { Router } from 'express'
-import authRouter from './auth/index.js'
 import { TYPES } from '../utils/constant.js'
+
+// routes
+import authRouter from './auth/index.js'
 import userRouter from './user/index.js'
+import wishlistRouter from './wishlist/index.js'
+import categoryRouter from './category/index.js'
+import storeRouter from './store/index.js'
 
 const router = Router()
 
@@ -11,6 +16,9 @@ router.get('/', async(req, res) => res.json({
 }))
 router.use(authRouter)
 router.use(userRouter)
+router.use(wishlistRouter)
+router.use(categoryRouter)
+router.use(storeRouter)
 
 
 export default router

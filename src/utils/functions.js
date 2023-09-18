@@ -15,4 +15,11 @@ const serverError = (error, res) => res.status(STATUS_CODES.SERVER_ERROR).json(
     })
 )
 
-export { serverError, response }
+const createObject = (array = []) => {
+    if(!array?.length) return {}
+    return array.reduce((prev, current) => {
+        return Object.assign(prev, {[current]: current})
+    }, {})
+}
+
+export { serverError, response, createObject }

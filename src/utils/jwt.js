@@ -1,5 +1,7 @@
 import dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
+import { USER_ROLES } from './constant.js'
+import { createObject } from './functions.js'
 
 
 class JWT {
@@ -39,8 +41,13 @@ class JWT {
     handleAccess = async (token, isUsedForUser = false) => {
 		const isAdminAuthorized = await this.verifyUserToken(token)
 		return !isUsedForUser
-			? String(isAdminAuthorized?.role).toLowerCase() === 'admin'
-			: String(isAdminAuthorized?.role).toLowerCase() === 'user'
+			? String(isAdminAuthorized?.role).toLowerCase() === USER_ROLES.ADMIN
+			: String(isAdminAuthorized?.role).toLowerCase() === USER_ROLES.USER
+	}
+
+	getUserAccess = async (token) => {
+		const isVerified = await this.verifyUserToken(token)
+		return String(isVerified?.role).toLowerCase()
 	}
 }
 

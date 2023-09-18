@@ -61,7 +61,7 @@ class AuthController {
 						role: userData?.role,
 						username: userData?.username,
 						contact: userData?.contact
-					})
+					}, 60 * 24)
 				})
 			)
 		} catch (error) {
@@ -115,7 +115,7 @@ class AuthController {
 						role: findUser?.role,
 						username: findUser?.username,
 						contact: findUser?.contact
-					})
+					}, 60 * 24)
 				})
 			)
 		} catch (error) {
@@ -233,7 +233,7 @@ class AuthController {
 				created_At: 0
 			})
 
-			if(!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
+			if (!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
 				type: TYPES.ERROR,
 				message: RESPONSE_MESSAGES.NOT_FOUND
 			}))
@@ -248,7 +248,7 @@ class AuthController {
 		}
 	}
 
-	updateProfile = async(req, res) => {
+	updateProfile = async (req, res) => {
 		try {
 
 			const { full_name, DOB, gender, contact } = req.body
@@ -256,7 +256,7 @@ class AuthController {
 
 			const isAllFieldRequired = Helper.allFieldsAreRequired([full_name, DOB, gender, contact])
 
-			if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
+			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
 				type: TYPES.ERROR,
 				message: 'All fields are required.'
 			}))
@@ -270,7 +270,7 @@ class AuthController {
 				password: 0
 			})
 
-			if(!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
+			if (!profile) return res.status(STATUS_CODES.NOT_FOUND).json(response({
 				type: TYPES.ERROR,
 				message: RESPONSE_MESSAGES.NOT_FOUND
 			}))

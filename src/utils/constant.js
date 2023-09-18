@@ -25,7 +25,8 @@ const RESPONSE_MESSAGES = {
 
 const USER_ROLES = {
 	USER: 'user',
-	ADMIN: 'admin'
+	ADMIN: 'admin',
+	STORE_ADMIN: 'store_admin'
 }
 
 export { STATUS_CODES, TYPES, MASTER_ACCESS, RESPONSE_MESSAGES, USER_ROLES }

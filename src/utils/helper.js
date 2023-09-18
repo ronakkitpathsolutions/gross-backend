@@ -1,9 +1,9 @@
 import crypto from 'crypto'
-import mongoose from 'mongoose'
+import { Types } from 'mongoose'
 
 class Helper {
 
-    allFieldsAreRequired = (data = []) => {
+	allFieldsAreRequired = (data = []) => {
 		if (!data?.length) return true
 		const cloneData = [...data]
 		return cloneData?.some(
@@ -15,9 +15,15 @@ class Helper {
 		)
 	}
 
-    objectId = (id) => new mongoose.Types.ObjectId(id)
+	isAllObjectId = (data = []) => {
+		if (!data?.length) return true
+		const cloneData = [...data]
+		return cloneData.every(val => this.isValidObjectId(val))
+	}
 
-    uniqueId = (size) => {
+	isValidObjectId = (id) => Types.ObjectId.isValid(id)
+
+	uniqueId = (size) => {
 		const MASK = 0x3d
 		const LETTERS = 'abcdefghijklmnopqrstuvwxyz'
 		const NUMBERS = '1234567890'
@@ -27,7 +33,7 @@ class Helper {
 		return bytes.reduce((acc, byte) => `${acc}${charset[byte & MASK]}`, '')
 	}
 
-    removeField = (fields = [], body = {}) => {
+	removeField = (fields = [], body = {}) => {
 		if (!Object.keys(body)?.length) return {}
 		const cloneFields = [...fields]
 		const filteredResponse = { ...body }

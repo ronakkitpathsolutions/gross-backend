@@ -24,26 +24,26 @@ class App {
     }
 
     configureServer = () => new Promise((resolve) => {
-            const app = express()
-            app.use(cors())
-            app.use(express.json())
-            app.use(express.urlencoded({ extended: true }))
-            app.use(bodyParser.urlencoded({ extended: false }))
-            app.use('/api/v1', router)
-            resolve(app)
-        })
+        const app = express()
+        app.use(cors())
+        app.use(express.json())
+        app.use(express.urlencoded({ extended: true }))
+        app.use(bodyParser.urlencoded({ extended: false }))
+        app.use('/api/v1', router)
+        resolve(app)
+    })
 
     startServer = (app) => new Promise((resolve) => {
-            const port = process.env.PORT || 4000
-            app.set(port)
-            const server = http.createServer(app)
-            server.on('listening', () => {
-                const PORT = server.address().port
-                console.log('4. server started on:', `http://localhost:${PORT}/api/v1`)
-                resolve(server)
-            })
-            server.listen(port)
+        const port = process.env.PORT || 4000
+        app.set(port)
+        const server = http.createServer(app)
+        server.on('listening', () => {
+            const PORT = server.address().port
+            console.log('4. server started on:', `http://localhost:${PORT}/api/v1`)
+            resolve(server)
         })
+        server.listen(port)
+    })
 
     dbConfiguration = async (app) => {
         try {
@@ -58,5 +58,5 @@ class App {
 }
 
 export default new App()
- 
+
 

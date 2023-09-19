@@ -5,20 +5,20 @@ import { RESPONSE_MESSAGES, STATUS_CODES, TYPES } from '../../utils/constant.js'
 import Category from '../../models/category/index.js'
 
 class CategoryController {
-    constructor(){
+    constructor() {
         dotenv.config()
     }
 
-    addNewCategory = async(req, res) => {
+    addNewCategory = async (req, res) => {
         try {
-            
+
             const { store_id, category } = req.body
 
             const isAllFieldRequired = Helper.allFieldsAreRequired([store_id, category])
             if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'All fields are required.'
+                    message: RESPONSE_MESSAGES.REQUIRED
                 })
             )
 
@@ -26,7 +26,7 @@ class CategoryController {
             if (!isAllObjectId) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'Invalid Object id'
+                    message: RESPONSE_MESSAGES.INVALID_ID
                 })
             )
 
@@ -55,13 +55,13 @@ class CategoryController {
         }
     }
 
-    deleteCategory = async(req, res) => {
+    deleteCategory = async (req, res) => {
         try {
             const { _id } = req.params
 
             const deleteCategory = await Category.findByIdAndDelete(_id)
 
-            if(!deleteCategory) return res.status(STATUS_CODES.NOT_FOUND).json(
+            if (!deleteCategory) return res.status(STATUS_CODES.NOT_FOUND).json(
                 response({
                     type: TYPES.ERROR,
                     message: RESPONSE_MESSAGES.NOT_FOUND
@@ -80,15 +80,15 @@ class CategoryController {
         }
     }
 
-    getAllCategory = async(req, res) => {
+    getAllCategory = async (req, res) => {
         try {
             const { store_id } = req.body
-            
+
             const isAllFieldRequired = Helper.allFieldsAreRequired([store_id])
             if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'All fields are required.'
+                    message: RESPONSE_MESSAGES.REQUIRED
                 })
             )
 
@@ -96,11 +96,11 @@ class CategoryController {
             if (!isAllObjectId) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'Invalid Object id'
+                    message: RESPONSE_MESSAGES.INVALID_ID
                 })
             )
 
-            const category = await Category.find({store_id}).select({
+            const category = await Category.find({ store_id }).select({
                 __v: 0,
                 created_At: 0,
                 store_id: 0

@@ -1,26 +1,26 @@
 import Store from "../../models/store/index.js"
 import dotenv from 'dotenv'
 import Helper from "../../utils/helper.js"
-import { STATUS_CODES, TYPES } from "../../utils/constant.js"
+import { RESPONSE_MESSAGES, STATUS_CODES, TYPES } from "../../utils/constant.js"
 import { response, serverError } from "../../utils/functions.js"
 
 class StoreController {
 
-    constructor(){
+    constructor() {
         dotenv.config()
     }
 
-    createStore = async(req, res) => {
+    createStore = async (req, res) => {
         try {
             const { user_id, store_name, contact, ...body } = req.body
 
             const { store_image, store_banner } = req.files
 
             const isAllFieldRequired = Helper.allFieldsAreRequired([user_id, store_name, contact])
-            if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+            if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'All fields are required.'
+                    message: RESPONSE_MESSAGES.REQUIRED
                 })
             )
 
@@ -28,10 +28,10 @@ class StoreController {
             if (!isAllObjectId) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'Invalid Object id'
+                    message: RESPONSE_MESSAGES.INVALID_ID
                 })
             )
-            
+
             const data = new Store({
                 user_id, store_name, info: {
                     contact, email: body?.email
@@ -50,7 +50,7 @@ class StoreController {
         } catch (error) {
             serverError(error, res)
         }
-    }    
+    }
 }
 
 export default new StoreController()

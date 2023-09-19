@@ -9,6 +9,8 @@ import {
 import { response, serverError } from "../utils/functions.js";
 import JWT from "../utils/jwt.js";
 import User from "../models/user/index.js";
+import Helper from "../utils/helper.js";
+import Store from "../models/store/index.js";
 
 class MiddleWare {
   constructor() {
@@ -21,7 +23,7 @@ class MiddleWare {
     else
       res
         .status(STATUS_CODES.UN_AUTHORIZED)
-        .json(response({ type: TYPES.ERROR, message: "Invalid objectId." }));
+        .json(response({ type: TYPES.ERROR, message: RESPONSE_MESSAGES.INVALID_ID }));
   };
 
   authentication = async (req, res, next) => {
@@ -89,22 +91,22 @@ class MiddleWare {
       const { user_id } = req.body;
 
       const verifiedUser = await JWT.verifyUserToken(token);
-    const findUser = await User.findById(verifiedUser?.user_id);
+      const findUser = await User.findById(verifiedUser?.user_id);
 
-    if (findUser?.role === USER_ROLES.ADMIN) {
-      return next();
-    } else if (
-      findUser?.role === USER_ROLES.STORE_ADMIN &&
-      findUser?._id?.toString() === user_id
-    ) {
-      return next();
-    } else
-      return res.status(STATUS_CODES.UN_AUTHORIZED).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-        })
-      );
+      if (findUser?.role === USER_ROLES.ADMIN) {
+        return next();
+      } else if (
+        findUser?.role === USER_ROLES.STORE_ADMIN &&
+        findUser?._id?.toString() === user_id
+      ) {
+        return next();
+      } else
+        return res.status(STATUS_CODES.UN_AUTHORIZED).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
+          })
+        );
 
     } catch (error) {
       serverError(error, res);
@@ -196,5 +198,48 @@ class MiddleWare {
       serverError(error, res);
     }
   };
+
+  isOwnStore = async (req, res, next) => {
+    try {
+
+      const { store_id, user_id } = req.body
+
+      const isAllFieldRequired = Helper.allFieldsAreRequired([store_id, user_id])
+      if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.REQUIRED
+        })
+      )
+
+      if (!Helper.isAllObjectId([store_id, user_id])) return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.INVALID_ID
+        })
+      )
+
+      const store = await Store.findById(store_id)
+      if (!store) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
+
+      if (user_id !== store?.user_id) return res.status(STATUS_CODES.UN_AUTHORIZED).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
+        })
+      )
+
+      next()
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
 }
 export default new MiddleWare();

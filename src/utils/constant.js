@@ -20,7 +20,9 @@ const RESPONSE_MESSAGES = {
 	UN_AUTHORIZED_USER: 'Unauthorized user.',
 	PROVIDE_TOKEN: 'Provide token.',
 	INVALID_TOKEN: 'Invalid token.',
-	NOT_FOUND: 'Data not found.'
+	NOT_FOUND: 'Data not found.',
+	INVALID_ID: 'Invalid id.',
+	REQUIRED: 'All fields are required.'
 }
 
 const USER_ROLES = {

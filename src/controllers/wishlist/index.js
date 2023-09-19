@@ -19,7 +19,7 @@ class WishlistController {
             if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'All fields are required.'
+                    message: RESPONSE_MESSAGES.REQUIRED
                 })
             )
 
@@ -27,7 +27,7 @@ class WishlistController {
             if (!isAllObjectId) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'Invalid Object id'
+                    message: RESPONSE_MESSAGES.INVALID_ID
                 })
             )
 
@@ -65,7 +65,7 @@ class WishlistController {
             if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'All fields are required.'
+                    message: RESPONSE_MESSAGES.REQUIRED
                 })
             )
 
@@ -73,15 +73,15 @@ class WishlistController {
             if (!isAllObjectId) return res.status(STATUS_CODES.BAD_REQUEST).json(
                 response({
                     type: TYPES.ERROR,
-                    message: 'Invalid Object id'
+                    message: RESPONSE_MESSAGES.INVALID_ID
                 })
             )
 
             const isExist = await Wishlist.findOne({ product_id })
-            if(isExist){
+            if (isExist) {
                 const isDeleted = await Wishlist.findOneAndDelete({ product_id })
-                
-                if(isDeleted) return res.status(STATUS_CODES.SUCCESS).json(
+
+                if (isDeleted) return res.status(STATUS_CODES.SUCCESS).json(
                     response({
                         type: TYPES.ERROR,
                         message: 'Product successfully removed in the wishlist'
@@ -93,7 +93,7 @@ class WishlistController {
                     type: TYPES.ERROR,
                     message: RESPONSE_MESSAGES.NOT_FOUND
                 })
-            ) 
+            )
 
         } catch (error) {
             serverError(error, res)

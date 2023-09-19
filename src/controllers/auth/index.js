@@ -20,7 +20,7 @@ class AuthController {
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
 						type: TYPES.ERROR,
-						message: 'All fields are required.'
+						message: RESPONSE_MESSAGES.REQUIRED
 					})
 				)
 
@@ -78,7 +78,7 @@ class AuthController {
 				return res.status(STATUS_CODES.BAD_REQUEST).json(
 					response({
 						type: TYPES.ERROR,
-						message: 'All fields are required.'
+						message: RESPONSE_MESSAGES.REQUIRED
 					})
 				)
 
@@ -133,7 +133,7 @@ class AuthController {
 			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
 				response({
 					type: TYPES.ERROR,
-					message: 'All fields are required.'
+					message: RESPONSE_MESSAGES.REQUIRED
 				})
 			)
 
@@ -186,7 +186,7 @@ class AuthController {
 			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
 				response({
 					type: TYPES.ERROR,
-					message: 'All fields are required.'
+					message: RESPONSE_MESSAGES.REQUIRED
 				})
 			)
 
@@ -258,7 +258,7 @@ class AuthController {
 
 			if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(response({
 				type: TYPES.ERROR,
-				message: 'All fields are required.'
+				message: RESPONSE_MESSAGES.REQUIRED
 			}))
 
 			const update = req.file ? { full_name, DOB, gender, contact, profile: req?.file?.location } : { full_name, DOB, gender, contact }

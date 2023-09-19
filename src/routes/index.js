@@ -7,10 +7,11 @@ import userRouter from './user/index.js'
 import wishlistRouter from './wishlist/index.js'
 import categoryRouter from './category/index.js'
 import storeRouter from './store/index.js'
+import productRouter from './products/index.js'
 
 const router = Router()
 
-router.get('/', async(req, res) => res.json({
+router.get('/', async (req, res) => res.json({
     type: TYPES.SUCCESS,
     message: 'Server started.'
 }))
@@ -19,6 +20,7 @@ router.use(userRouter)
 router.use(wishlistRouter)
 router.use(categoryRouter)
 router.use(storeRouter)
+router.use(productRouter)
 
 
 export default router

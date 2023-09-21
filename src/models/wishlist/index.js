@@ -10,6 +10,11 @@ const wishlistSchema = new Schema({
         type: String,
 		required: true,
 		trim: true
+    },
+    store_id: {
+        type: String,
+		required: true,
+		trim: true
     }
 })
 

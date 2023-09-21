@@ -22,7 +22,7 @@ class Helper {
 	}
 
 	isValidObjectId = (id) => Types.ObjectId.isValid(id)
-
+	
 	uniqueId = (size) => {
 		const MASK = 0x3d
 		const LETTERS = 'abcdefghijklmnopqrstuvwxyz'

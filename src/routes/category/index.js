@@ -18,7 +18,7 @@ categoryRouter.delete(
     [
         Middlewares.authentication,
         Middlewares.isValidObjectId,
-        Middlewares.isStoreAdmin
+        Middlewares.isOwnStore,
     ],
     CategoryController.deleteCategory
 )

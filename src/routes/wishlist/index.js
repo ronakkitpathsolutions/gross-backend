@@ -6,17 +6,17 @@ const wishlistRouter = Router();
 
 wishlistRouter.post(
     "/wishlist",
-    [Middlewares.authentication],
+    [Middlewares.authentication, Middlewares.isOwn],
     WishlistController.addToWishlist
 );
-wishlistRouter.put(
+wishlistRouter.delete(
     "/wishlist",
-    [Middlewares.authentication],
+    [Middlewares.authentication, Middlewares.isOwn],
     WishlistController.removeWishlist
 );
 wishlistRouter.get(
     "/wishlist",
-    [Middlewares.authentication],
+    [Middlewares.authentication, Middlewares.isOwn],
     WishlistController.getWishlist
 );
 

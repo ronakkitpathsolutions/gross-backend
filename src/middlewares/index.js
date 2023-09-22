@@ -241,5 +241,42 @@ class MiddleWare {
     }
   }
 
+  isOwn = async (req, res, next) => {
+    try {
+      const { user_id } = req.body
+      const { token } = req.headers;
+
+      const isAllFieldRequired = Helper.allFieldsAreRequired([user_id])
+      if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.REQUIRED
+        })
+      )
+
+      if (!Helper.isAllObjectId([user_id])) return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.INVALID_ID
+        })
+      )
+
+      const verifiedUser = await JWT.verifyUserToken(token);
+      const findUser = await User.findById(verifiedUser?.user_id);
+
+      if (findUser?._id?.toString() !== user_id)
+        res.status(STATUS_CODES.UN_AUTHORIZED).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
+          })
+        );
+      else return next();
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
 }
 export default new MiddleWare();

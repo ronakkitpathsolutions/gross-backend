@@ -88,11 +88,12 @@ class WishlistController {
 
   removeWishlist = async (req, res) => {
     try {
-      const { user_id, product_id } = req.body;
+      const { user_id, product_id, store_id } = req.body;
 
       const isAllFieldRequired = Helper.allFieldsAreRequired([
         user_id,
         product_id,
+        store_id,
       ]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
@@ -102,7 +103,11 @@ class WishlistController {
           })
         );
 
-      const isAllObjectId = Helper.isAllObjectId([user_id, product_id]);
+      const isAllObjectId = Helper.isAllObjectId([
+        user_id,
+        product_id,
+        store_id,
+      ]);
       if (!isAllObjectId)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
@@ -111,10 +116,9 @@ class WishlistController {
           })
         );
 
-      const isExist = await Wishlist.findOne({ product_id });
+      const isExist = await Wishlist.findOne({ user_id, store_id, product_id });
       if (isExist) {
-        const isDeleted = await Wishlist.findOneAndDelete({ product_id });
-
+        const isDeleted = await Wishlist.findOneAndDelete({ user_id, store_id, product_id });
         if (isDeleted)
           return res.status(STATUS_CODES.SUCCESS).json(
             response({
@@ -156,23 +160,6 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
-        );
-
-      const isExistUser = await User.findOne({ _id: user_id });
-      if (!isExistUser)
-        return res.status(STATUS_CODES.NOT_FOUND).json(
-          response({
-            type: TYPES.ERROR,
-            message: "User Not Found",
-          })
-        );
-      const isExistStore = await store.findOne({ _id: store_id });
-      if (!isExistStore)
-        return res.status(STATUS_CODES.NOT_FOUND).json(
-          response({
-            type: TYPES.ERROR,
-            message: "Store Not Found",
           })
         );
 

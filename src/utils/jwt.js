@@ -4,11 +4,11 @@ import { USER_ROLES } from './constant.js'
 
 
 class JWT {
-    constructor() {
+	constructor() {
 		dotenv.config()
 	}
 
-    generateNewToken = async (payload, schedule = 60) => {
+	generateNewToken = async (payload, schedule = 60) => {
 		const token = await new Promise((resolve, reject) => {
 			jwt.sign(
 				{ ...payload, exp: Math.floor(Date.now() / 1000) + schedule * 60 },
@@ -22,7 +22,7 @@ class JWT {
 		return token
 	}
 
-    tokenExpired = async (token) => {
+	tokenExpired = async (token) => {
 		try {
 			const isExpired = jwt.verify(token, process.env.SECRET_KEY)
 			if (!isExpired) return true
@@ -32,12 +32,12 @@ class JWT {
 		}
 	}
 
-    verifyUserToken = async (token) => {
+	verifyUserToken = async (token) => {
 		const isVerified = jwt.verify(token, process.env.SECRET_KEY)
 		return isVerified
 	}
 
-    handleAccess = async (token, isUsedForUser = false) => {
+	handleAccess = async (token, isUsedForUser = false) => {
 		const isAdminAuthorized = await this.verifyUserToken(token)
 		return !isUsedForUser
 			? String(isAdminAuthorized?.role).toLowerCase() === USER_ROLES.ADMIN

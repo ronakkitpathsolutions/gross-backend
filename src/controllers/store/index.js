@@ -112,7 +112,7 @@ class StoreController {
     }
   };
 
-  editStore = async(req, res) => {
+  editStore = async (req, res) => {
     try {
 
       const { store_image, store_banner } = req.files;
@@ -120,39 +120,41 @@ class StoreController {
 
 
 
-      // const isAllFieldRequired = Helper.allFieldsAreRequired(Object.values(body))
-      // if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+      const data = Helper.allFieldsAreNotRequired({ country, street, pin_code, })
+
+      return res.json(data)
+      // if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
       //   response({
       //     type: TYPES.ERROR,
-      //     message:"All fields are required."
+      //     message: "All fields are required."
       //   })
       // )
 
-      const updateData = {}
+      // const updateData = {}
 
-      if(req.body.email){
-        updateData['info'] = {email: req.body.email}
-      }
+      // if (req.body.email) {
+      //   updateData['info'] = { email: req.body.email }
+      // }
 
 
 
-      await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id },{
-           ...updateData
-      })
+      // await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id }, {
+      //   ...updateData
+      // })
 
-      const data = await Store.findOne({_id: new mongoose.Types.ObjectId(store_id), user_id})
+      // const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
 
-      if(!data) return res.status(STATUS_CODES.NOT_FOUND).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.NOT_FOUND
-        })
-      )
+      // if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+      //   response({
+      //     type: TYPES.ERROR,
+      //     message: RESPONSE_MESSAGES.NOT_FOUND
+      //   })
+      // )
 
-      return res.status(STATUS_CODES.SUCCESS).json(response({
-        type: TYPES.SUCCESS,
-        data
-      }))
+      // return res.status(STATUS_CODES.SUCCESS).json(response({
+      //   type: TYPES.SUCCESS,
+      //   data
+      // }))
 
 
     } catch (error) {

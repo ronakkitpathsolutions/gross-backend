@@ -15,7 +15,9 @@ storeRouter.post(
     ]),
     Middlewares.onlyForStoreAdmin,
   ],
-  StoreController.createStore,
+  StoreController.createStore
 );
+
+storeRouter.get("/stores", StoreController.getAllStores);
 
 export default storeRouter;

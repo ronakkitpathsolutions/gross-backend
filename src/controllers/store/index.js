@@ -15,7 +15,17 @@ class StoreController {
 
   createStore = async (req, res) => {
     try {
-      const { user_id, store_name, contact, ...body } = req.body;
+      const {
+        user_id,
+        store_name,
+        contact,
+        city,
+        state,
+        street,
+        country,
+        pin_code,
+        ...body
+      } = req.body;
 
       const { store_image, store_banner } = req.files;
 
@@ -23,13 +33,18 @@ class StoreController {
         user_id,
         store_name,
         contact,
+        city,
+        state,
+        street,
+        country,
+        pin_code,
       ]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -38,12 +53,19 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const data = new Store({
         user_id,
         store_name,
+        address: {
+          city,
+          state,
+          street,
+          country,
+          pin_code,
+        },
         info: {
           contact,
           email: body?.email,
@@ -62,7 +84,27 @@ class StoreController {
         response({
           type: TYPES.SUCCESS,
           data: storeData,
-        }),
+        })
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  getAllStores = async (req, res) => {
+    try {
+      const data = await Store.find().select({
+        __v: 0,
+        created_At: 0,
+        store_banner: 0,
+        user_id: 0,
+        store_banner: 0,
+      });
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data,
+        })
       );
     } catch (error) {
       serverError(error, res);

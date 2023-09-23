@@ -10,8 +10,8 @@ cartRouter.post(
   CartController.addToCart
 );
 cartRouter.delete(
-  "/cart/remove",
-  [MiddleWares.authentication, MiddleWares.isOwn],
+  "/cart/remove/:_id",
+  [MiddleWares.authentication],
   CartController.removeCartProduct
 );
 cartRouter.get(

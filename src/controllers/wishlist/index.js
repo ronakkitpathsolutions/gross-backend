@@ -59,7 +59,7 @@ class WishlistController {
           })
         );
 
-      const isExist = await Wishlist.findOne({ product_id });
+      const isExist = await Wishlist.findOne({ product_id, user_id });
       if (isExist)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
@@ -88,13 +88,9 @@ class WishlistController {
 
   removeWishlist = async (req, res) => {
     try {
-      const { user_id, product_id, store_id } = req.body;
+      const { _id } = req.params;
 
-      const isAllFieldRequired = Helper.allFieldsAreRequired([
-        user_id,
-        product_id,
-        store_id,
-      ]);
+      const isAllFieldRequired = Helper.allFieldsAreRequired([_id]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
@@ -103,11 +99,7 @@ class WishlistController {
           })
         );
 
-      const isAllObjectId = Helper.isAllObjectId([
-        user_id,
-        product_id,
-        store_id,
-      ]);
+      const isAllObjectId = Helper.isAllObjectId([_id]);
       if (!isAllObjectId)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
@@ -116,23 +108,21 @@ class WishlistController {
           })
         );
 
-      const isExist = await Wishlist.findOne({ user_id, store_id, product_id });
-      if (isExist) {
-        const isDeleted = await Wishlist.findOneAndDelete({ user_id, store_id, product_id });
-        if (isDeleted)
-          return res.status(STATUS_CODES.SUCCESS).json(
-            response({
-              type: TYPES.ERROR,
-              message: "Product successfully removed in the wishlist",
-            })
-          );
-      } else
-        return res.status(STATUS_CODES.NOT_FOUND).json(
-          response({
-            type: TYPES.ERROR,
-            message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
-        );
+      const isDeleted = await Wishlist.findByIdAndDelete(_id);
+      if (!isDeleted) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND,
+        })
+      );
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.ERROR,
+          message: "Product successfully removed in the wishlist",
+        })
+      );
+
     } catch (error) {
       serverError(error, res);
     }

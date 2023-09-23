@@ -7,7 +7,7 @@ import {
 } from "../../utils/constant.js";
 import { response, serverError } from "../../utils/functions.js";
 import Helper from "../../utils/helper.js";
-import cart from "../../models/cart/index.js";
+import Cart from "../../models/cart/index.js";
 
 class CartController {
   constructor() {
@@ -46,7 +46,7 @@ class CartController {
 
       const isExistProduct = await Product.findOne({
         _id: product_id,
-        user_id: store_id,
+        store_id,
       });
       if (!isExistProduct)
         return res.status(STATUS_CODES.NOT_FOUND).json(
@@ -55,7 +55,7 @@ class CartController {
             message: RESPONSE_MESSAGES.NOT_FOUND,
           })
         );
-      const isExist = await cart.findOne({ product_id });
+      const isExist = await Cart.findOne({ product_id, user_id });
       if (isExist)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
@@ -64,7 +64,7 @@ class CartController {
           })
         );
 
-      const data = new cart({
+      const data = new Cart({
         user_id,
         product_id,
         store_id,
@@ -85,12 +85,9 @@ class CartController {
 
   removeCartProduct = async (req, res) => {
     try {
-      const { product_id, store_id, user_id } = req.body;
-      const isAllFieldRequired = Helper.allFieldsAreRequired([
-        product_id,
-        store_id,
-        user_id,
-      ]);
+      const { _id } = req.params;
+
+      const isAllFieldRequired = Helper.allFieldsAreRequired([_id]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
@@ -99,11 +96,7 @@ class CartController {
           })
         );
 
-      const isAllObjectId = Helper.isAllObjectId([
-        product_id,
-        store_id,
-        user_id,
-      ]);
+      const isAllObjectId = Helper.isAllObjectId([_id]);
       if (!isAllObjectId)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
@@ -112,32 +105,22 @@ class CartController {
           })
         );
 
-      const isExistProduct = await Product.findOne({
-        product_id,
-        store_id,
-        user_id,
-      });
-      if (isExistProduct) {
-        const isDeleted = await cart.findOneAndDelete({
-          product_id,
-          store_id,
-          user_id,
-        });
-
-        if (isDeleted)
-          return res.status(STATUS_CODES.SUCCESS).json(
-            response({
-              type: TYPES.ERROR,
-              message: "Product successfully removed in the Cart",
-            })
-          );
-      } else
+      const isDeleted = await Cart.findByIdAndDelete(_id);
+      if (!isDeleted)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
           })
         );
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.ERROR,
+          message: "Product successfully removed in the cart",
+        })
+      );
+
     } catch (error) {
       serverError(error, res);
     }
@@ -166,14 +149,6 @@ class CartController {
             message: RESPONSE_MESSAGES.INVALID_ID,
           })
         );
-      const isExistStore = await cart.findOne({ user_id, store_id });
-      if (!isExistStore)
-        return res.status(STATUS_CODES.NOT_FOUND).json(
-          response({
-            type: TYPES.ERROR,
-            message: "User Not Found",
-          })
-        );
 
       const pipeline = [
         {
@@ -194,12 +169,12 @@ class CartController {
             from: "products",
             localField: "product_id",
             foreignField: "_id",
-            as: "CartData",
+            as: "cartData",
           },
         },
         {
           $unwind: {
-            path: "$CartData",
+            path: "$cartData",
             preserveNullAndEmptyArrays: false,
           },
         },
@@ -209,7 +184,7 @@ class CartController {
             product_id: 0,
             store_id: 0,
             __v: 0,
-            CartData: {
+            cartData: {
               user_id: 0,
               store_id: 0,
               __v: 0,
@@ -218,11 +193,11 @@ class CartController {
         },
       ];
 
-      const CartData = await cart.aggregate(pipeline);
+      const cartData = await Cart.aggregate(pipeline);
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
-          data: CartData,
+          data: cartData,
         })
       );
     } catch (error) {

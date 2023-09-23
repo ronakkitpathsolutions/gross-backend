@@ -5,13 +5,13 @@ import WishlistController from "../../controllers/wishlist/index.js";
 const wishlistRouter = Router();
 
 wishlistRouter.post(
-    "/wishlist",
+    "/wishlist/add",
     [Middlewares.authentication, Middlewares.isOwn],
     WishlistController.addToWishlist
 );
 wishlistRouter.delete(
-    "/wishlist",
-    [Middlewares.authentication, Middlewares.isOwn],
+    "/wishlist/remove/:_id",
+    [Middlewares.authentication],
     WishlistController.removeWishlist
 );
 wishlistRouter.get(

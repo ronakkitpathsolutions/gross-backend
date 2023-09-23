@@ -14,6 +14,10 @@ class Helper {
     );
   };
 
+  allFieldsAreNotRequired = (fields) => {
+    
+  }
+
   isAllObjectId = (data = []) => {
     if (!data?.length) return true;
     const cloneData = [...data];
@@ -43,6 +47,16 @@ class Helper {
     });
     return filteredResponse;
   };
+
+  groupingObj = (data = {}, key) => {
+    if(!key || !Object.keys(data).length) return {}
+    return {
+      [key]: {
+        ...data
+      }
+    }
+  }
+
 }
 
 export default new Helper();

@@ -7,6 +7,7 @@ import {
   TYPES,
 } from "../../utils/constant.js";
 import { response, serverError } from "../../utils/functions.js";
+import mongoose from "mongoose";
 
 class StoreController {
   constructor() {
@@ -110,6 +111,55 @@ class StoreController {
       serverError(error, res);
     }
   };
+
+  editStore = async(req, res) => {
+    try {
+
+      const { store_image, store_banner } = req.files;
+      const { store_id, user_id } = req.body
+
+
+
+      // const isAllFieldRequired = Helper.allFieldsAreRequired(Object.values(body))
+      // if(isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
+      //   response({
+      //     type: TYPES.ERROR,
+      //     message:"All fields are required."
+      //   })
+      // )
+
+      const updateData = {}
+
+      if(req.body.email){
+        updateData['info'] = {email: req.body.email}
+      }
+
+
+
+      await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id },{
+           ...updateData
+      })
+
+      const data = await Store.findOne({_id: new mongoose.Types.ObjectId(store_id), user_id})
+
+      if(!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
+
+      return res.status(STATUS_CODES.SUCCESS).json(response({
+        type: TYPES.SUCCESS,
+        data
+      }))
+
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
 }
 
 export default new StoreController();

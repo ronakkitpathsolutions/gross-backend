@@ -204,6 +204,51 @@ class CartController {
       serverError(error, res);
     }
   };
+
+  editCart = async (req, res) => {
+    try {
+      const { qty } = req.body;
+      const { _id } = req.params;
+
+      const isAllFieldRequired = Helper.allFieldsAreRequired([qty]);
+      if (isAllFieldRequired)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.REQUIRED,
+          })
+        );
+
+      const isAllObjectId = Helper.isAllObjectId([_id]);
+      if (!isAllObjectId)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          })
+        );
+
+      const isExist = await Cart.findById(_id);
+      if (!isExist)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.NOT_FOUND,
+          })
+        );
+
+      await Cart.findByIdAndUpdate(_id, { qty })
+      const data = await Cart.findById(_id)
+
+      return res.status(STATUS_CODES.SUCCESS).json(response({
+        type: TYPES.SUCCESS,
+        data
+      }))
+
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
 }
 
 export default new CartController();

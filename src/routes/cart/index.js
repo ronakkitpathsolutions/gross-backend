@@ -20,4 +20,9 @@ cartRouter.get(
   CartController.getAllCart
 );
 
+cartRouter.patch(
+  "/cart/edit",
+  [MiddleWares.authentication],
+  CartController.editCart
+);
 export default cartRouter;

@@ -38,4 +38,10 @@ authRouter.post(
   AuthController.masterLogin
 );
 
+authRouter.post(
+  "/user/forgot-password",
+  [MiddleWares.authentication],
+  AuthController.forgotPassword
+);
+
 export default authRouter;

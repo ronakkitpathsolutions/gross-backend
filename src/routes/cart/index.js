@@ -20,8 +20,8 @@ cartRouter.get(
   CartController.getAllCart
 );
 
-cartRouter.patch(
-  "/cart/edit",
+cartRouter.put(
+  "/cart/edit/:_id",
   [MiddleWares.authentication],
   CartController.editCart
 );

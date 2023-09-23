@@ -23,7 +23,12 @@ class MiddleWare {
     else
       res
         .status(STATUS_CODES.UN_AUTHORIZED)
-        .json(response({ type: TYPES.ERROR, message: RESPONSE_MESSAGES.INVALID_ID }));
+        .json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          }),
+        );
   };
 
   authentication = async (req, res, next) => {
@@ -34,14 +39,14 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.PROVIDE_TOKEN,
-          })
+          }),
         );
       else if (await JWT.tokenExpired(token))
         res.status(STATUS_CODES.UN_AUTHORIZED).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_TOKEN,
-          })
+          }),
         );
       else next();
     } catch (error) {
@@ -59,7 +64,7 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else next();
     } catch (error) {
@@ -77,7 +82,7 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else next();
     } catch (error) {
@@ -105,9 +110,8 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
-
     } catch (error) {
       serverError(error, res);
     }
@@ -123,7 +127,7 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else next();
     } catch (error) {
@@ -147,7 +151,7 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else return next();
     } catch (error) {
@@ -174,7 +178,7 @@ class MiddleWare {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-        })
+        }),
       );
   };
 
@@ -191,7 +195,7 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else return next();
     } catch (error) {
@@ -201,65 +205,72 @@ class MiddleWare {
 
   isOwnStore = async (req, res, next) => {
     try {
+      const { store_id, user_id } = req.body;
 
-      const { store_id, user_id } = req.body
+      const isAllFieldRequired = Helper.allFieldsAreRequired([
+        store_id,
+        user_id,
+      ]);
+      if (isAllFieldRequired)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.REQUIRED,
+          }),
+        );
 
-      const isAllFieldRequired = Helper.allFieldsAreRequired([store_id, user_id])
-      if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.REQUIRED
-        })
-      )
+      if (!Helper.isAllObjectId([store_id, user_id]))
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          }),
+        );
 
-      if (!Helper.isAllObjectId([store_id, user_id])) return res.status(STATUS_CODES.BAD_REQUEST).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.INVALID_ID
-        })
-      )
+      const store = await Store.findById(store_id);
+      if (!store)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.NOT_FOUND,
+          }),
+        );
 
-      const store = await Store.findById(store_id)
-      if (!store) return res.status(STATUS_CODES.NOT_FOUND).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.NOT_FOUND
-        })
-      )
+      if (user_id !== store?.user_id)
+        return res.status(STATUS_CODES.UN_AUTHORIZED).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
+          }),
+        );
 
-      if (user_id !== store?.user_id) return res.status(STATUS_CODES.UN_AUTHORIZED).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER
-        })
-      )
-
-      next()
-
+      next();
     } catch (error) {
-      serverError(error, res)
+      serverError(error, res);
     }
-  }
+  };
 
   isOwn = async (req, res, next) => {
     try {
-      const { user_id } = req.body
+      const { user_id } = req.body;
       const { token } = req.headers;
 
-      const isAllFieldRequired = Helper.allFieldsAreRequired([user_id])
-      if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.REQUIRED
-        })
-      )
+      const isAllFieldRequired = Helper.allFieldsAreRequired([user_id]);
+      if (isAllFieldRequired)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.REQUIRED,
+          }),
+        );
 
-      if (!Helper.isAllObjectId([user_id])) return res.status(STATUS_CODES.BAD_REQUEST).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.INVALID_ID
-        })
-      )
+      if (!Helper.isAllObjectId([user_id]))
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          }),
+        );
 
       const verifiedUser = await JWT.verifyUserToken(token);
       const findUser = await User.findById(verifiedUser?.user_id);
@@ -269,14 +280,12 @@ class MiddleWare {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.UN_AUTHORIZED_USER,
-          })
+          }),
         );
       else return next();
-
     } catch (error) {
-      serverError(error, res)
+      serverError(error, res);
     }
-  }
-
+  };
 }
 export default new MiddleWare();

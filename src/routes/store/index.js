@@ -9,10 +9,13 @@ storeRouter.post(
   "/create-store",
   [
     Middlewares.authentication,
-    AWS.S3('stores').fields([{name: "store_banner", maxCount: 1}, {name: "store_image", maxCount: 1}]),
+    AWS.S3("stores").fields([
+      { name: "store_banner", maxCount: 1 },
+      { name: "store_image", maxCount: 1 },
+    ]),
     Middlewares.onlyForStoreAdmin,
   ],
-  StoreController.createStore
+  StoreController.createStore,
 );
 
 export default storeRouter;

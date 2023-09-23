@@ -28,7 +28,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([
@@ -41,7 +41,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isExistProduct = await Product.findOne({
@@ -53,7 +53,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
       const isExist = await Cart.findOne({ product_id, user_id });
       if (isExist)
@@ -61,7 +61,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: "Product already added in Cart",
-          })
+          }),
         );
 
       const data = new Cart({
@@ -76,7 +76,7 @@ class CartController {
         response({
           type: TYPES.SUCCESS,
           message: "Product successfully added in the cart",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -93,7 +93,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([_id]);
@@ -102,7 +102,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isDeleted = await Cart.findByIdAndDelete(_id);
@@ -111,16 +111,15 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.ERROR,
           message: "Product successfully removed in the cart",
-        })
+        }),
       );
-
     } catch (error) {
       serverError(error, res);
     }
@@ -138,7 +137,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id, store_id]);
@@ -147,7 +146,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const pipeline = [
@@ -198,7 +197,7 @@ class CartController {
         response({
           type: TYPES.SUCCESS,
           data: cartData,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -216,7 +215,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([_id]);
@@ -225,7 +224,7 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isExist = await Cart.findById(_id);
@@ -234,17 +233,18 @@ class CartController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
-      await Cart.findByIdAndUpdate(_id, { qty })
-      const data = await Cart.findById(_id)
+      await Cart.findByIdAndUpdate(_id, { qty });
+      const data = await Cart.findById(_id);
 
-      return res.status(STATUS_CODES.SUCCESS).json(response({
-        type: TYPES.SUCCESS,
-        data
-      }))
-
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data,
+        }),
+      );
     } catch (error) {
       serverError(error, res);
     }

@@ -33,7 +33,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       if (password !== confirm_password)
@@ -41,7 +41,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "password and confirm password does not matched.",
-          })
+          }),
         );
 
       const existUser = await User.findOne({ email });
@@ -50,7 +50,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "Email already exist.",
-          })
+          }),
         );
 
       const data = new User({
@@ -75,9 +75,9 @@ class AuthController {
               username: userData?.username,
               contact: userData?.contact,
             },
-            60 * 24
+            60 * 24,
           ),
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -94,7 +94,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const findUser = await User.findOne({ email });
@@ -104,12 +104,12 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "User not found this email address.",
-          })
+          }),
         );
 
       const isAuthenticated = await Bcrypt.comparePassword(
         password,
-        findUser?.password
+        findUser?.password,
       );
 
       if (!isAuthenticated)
@@ -117,7 +117,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "Invalid username or password.",
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
@@ -132,9 +132,9 @@ class AuthController {
               username: findUser?.username,
               contact: findUser?.contact,
             },
-            60 * 24
+            60 * 24,
           ),
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -157,7 +157,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       if (confirm_password !== new_password)
@@ -165,7 +165,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "password and confirm password does not matched.",
-          })
+          }),
         );
 
       const userData = await JWT.verifyUserToken(token);
@@ -174,7 +174,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "User not found.",
-          })
+          }),
         );
 
       const user = await User.findById(userData?.user_id);
@@ -183,7 +183,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "User not found.",
-          })
+          }),
         );
 
       const matched = await Bcrypt.matchPassword(old_password, user?.password);
@@ -192,7 +192,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "Invalid Old password.",
-          })
+          }),
         );
 
       await User.findByIdAndUpdate(user?.id, {
@@ -203,7 +203,7 @@ class AuthController {
         response({
           type: TYPES.SUCCESS,
           message: "Password reset successfully.",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -223,7 +223,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const findUser = await User.findOne({ email });
@@ -233,7 +233,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "User not found this email address.",
-          })
+          }),
         );
 
       if (master_password !== MASTER_ACCESS)
@@ -241,7 +241,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "Invalid Password.",
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
@@ -255,7 +255,7 @@ class AuthController {
             username: findUser?.username,
             contact: findUser?.contact,
           }),
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -276,14 +276,14 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data: profile,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -307,7 +307,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const update = req.file
@@ -326,14 +326,14 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data: profile,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -350,7 +350,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isExistEmail = await User.findOne({ email });
@@ -359,7 +359,7 @@ class AuthController {
           response({
             type: TYPES.ERROR,
             message: "User Not Found",
-          })
+          }),
         );
 
       const generateToken = await JWT.generateNewToken({

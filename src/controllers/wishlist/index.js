@@ -8,8 +8,6 @@ import {
 } from "../../utils/constant.js";
 import Wishlist from "../../models/wishlist/index.js";
 import Product from "../../models/products/index.js";
-import User from "../../models/user/index.js";
-import store from "../../models/store/index.js";
 
 class WishlistController {
   constructor() {
@@ -30,7 +28,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([
@@ -43,7 +41,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       // check is product exist or not
@@ -56,7 +54,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       const isExist = await Wishlist.findOne({ product_id, user_id });
@@ -65,7 +63,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: "Product already added in wishlist",
-          })
+          }),
         );
 
       const data = new Wishlist({
@@ -79,7 +77,7 @@ class WishlistController {
         response({
           type: TYPES.SUCCESS,
           message: "Product successfully added in the wishlist",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -96,7 +94,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([_id]);
@@ -105,24 +103,24 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isDeleted = await Wishlist.findByIdAndDelete(_id);
-      if (!isDeleted) return res.status(STATUS_CODES.NOT_FOUND).json(
-        response({
-          type: TYPES.ERROR,
-          message: RESPONSE_MESSAGES.NOT_FOUND,
-        })
-      );
+      if (!isDeleted)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.NOT_FOUND,
+          }),
+        );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.ERROR,
           message: "Product successfully removed in the wishlist",
-        })
+        }),
       );
-
     } catch (error) {
       serverError(error, res);
     }
@@ -141,7 +139,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id, store_id]);
@@ -150,7 +148,7 @@ class WishlistController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const pipeline = [
@@ -200,7 +198,7 @@ class WishlistController {
         response({
           type: TYPES.SUCCESS,
           data: result,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);

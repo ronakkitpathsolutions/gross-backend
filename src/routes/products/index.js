@@ -7,31 +7,28 @@ const productRouter = Router();
 
 // for store admin
 productRouter.post(
-    "/create-product",
-    [
-        Middlewares.authentication,
-        AWS.S3("products").single("product_image"),
-        Middlewares.onlyForStoreAdmin,
-        Middlewares.isOwnStore,
-    ],
-    ProductController.createProduct
+  "/create-product",
+  [
+    Middlewares.authentication,
+    AWS.S3("products").single("product_image"),
+    Middlewares.onlyForStoreAdmin,
+    Middlewares.isOwnStore,
+  ],
+  ProductController.createProduct,
 );
 
-productRouter.get(
-    "/get-products",
-    ProductController.getAllProducts
-);
+productRouter.get("/get-products", ProductController.getAllProducts);
 
 //for super admin
 productRouter.post(
-    "/admin/create-product",
-    [
-        Middlewares.authentication,
-        AWS.S3("products").single("product_image"),
-        Middlewares.isAdmin,
-        Middlewares.isOwnStore,
-    ],
-    ProductController.createProduct
+  "/admin/create-product",
+  [
+    Middlewares.authentication,
+    AWS.S3("products").single("product_image"),
+    Middlewares.isAdmin,
+    Middlewares.isOwnStore,
+  ],
+  ProductController.createProduct,
 );
 
 export default productRouter;

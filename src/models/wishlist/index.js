@@ -1,21 +1,21 @@
-import mongoose, { Schema } from 'mongoose'
+import mongoose, { Schema } from "mongoose";
 
 const wishlistSchema = new Schema({
-    product_id: {
-        type: String,
-		required: true,
-		trim: true
-    },
-    user_id: {
-        type: String,
-		required: true,
-		trim: true
-    },
-    store_id: {
-        type: String,
-		required: true,
-		trim: true
-    }
-})
+  product_id: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  user_id: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  store_id: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+});
 
-export default mongoose.model('Wishlists', wishlistSchema)
+export default mongoose.model("Wishlists", wishlistSchema);

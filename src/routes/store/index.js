@@ -33,4 +33,6 @@ storeRouter.put(
 
 storeRouter.get("/stores", StoreController.getAllStores);
 
+storeRouter.get("/stores/:_id", StoreController.getStoreById);
+
 export default storeRouter;

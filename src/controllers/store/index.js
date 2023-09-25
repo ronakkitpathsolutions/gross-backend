@@ -112,6 +112,42 @@ class StoreController {
     }
   };
 
+  getStoreById = async (req, res) => {
+    try {
+      const { _id } = req.params
+
+      const isAllObjectId = Helper.isAllObjectId([_id]);
+      if (!isAllObjectId)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          })
+        );
+
+      const data = await Store.findById(_id).select({
+        __v: 0,
+        created_At: 0
+      })
+      if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data
+        })
+      )
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
   editStore = async (req, res) => {
     try {
 

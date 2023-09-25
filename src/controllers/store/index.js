@@ -130,7 +130,10 @@ class StoreController {
         info: { ...info, ...Helper.allFieldsAreNotRequired({ email, contact }) }
       })
 
-      const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
+      const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id }).select({
+        __v: 0,
+        created_At: 0
+      })
 
       if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
         response({

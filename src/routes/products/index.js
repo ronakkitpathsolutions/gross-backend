@@ -16,8 +16,17 @@ productRouter.post(
   ],
   ProductController.createProduct,
 );
-
 productRouter.get("/get-products", ProductController.getAllProducts);
+productRouter.get("/get-product/:_id", ProductController.getProductById);
+productRouter.delete(
+  "/remove-product/:_id",
+  [
+    Middlewares.authentication,
+    Middlewares.onlyForStoreAdmin,
+    Middlewares.isOwnStore,
+  ],
+  ProductController.removeProductById,
+);
 
 //for super admin
 productRouter.post(
@@ -29,6 +38,11 @@ productRouter.post(
     Middlewares.isOwnStore,
   ],
   ProductController.createProduct,
+);
+productRouter.delete(
+  "/admin/remove-product/:_id",
+  [Middlewares.authentication, Middlewares.isAdmin, Middlewares.isOwnStore],
+  ProductController.removeProductById,
 );
 
 export default productRouter;

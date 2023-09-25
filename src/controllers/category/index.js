@@ -50,7 +50,7 @@ class CategoryController {
       const data = new Category({
         category,
         store_id,
-        image: req?.file?.location ? req?.file?.location : null
+        image: req?.file?.location ? req?.file?.location : null,
       });
       await data.save();
 
@@ -67,7 +67,7 @@ class CategoryController {
 
   updateCategory = async (req, res) => {
     try {
-      const { _id } = req.params
+      const { _id } = req.params;
       const { store_id, category } = req.body;
       const isAllFieldRequired = Helper.allFieldsAreRequired([store_id]);
       if (isAllFieldRequired)
@@ -88,28 +88,31 @@ class CategoryController {
         );
 
       await Category.findByIdAndUpdate(_id, {
-        ...Helper.allFieldsAreNotRequired({ category, image: req?.file?.location })
-      })
+        ...Helper.allFieldsAreNotRequired({
+          category,
+          image: req?.file?.location,
+        }),
+      });
 
-      const data = await Category.findById(_id)
-      if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
-        response({
-          type: TYPES.ERROR,
-          message: 'Category not found.'
-        })
-      )
+      const data = await Category.findById(_id);
+      if (!data)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: "Category not found.",
+          }),
+        );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
-          data
-        })
-      )
-
+          data,
+        }),
+      );
     } catch (error) {
-      serverError(error, res)
+      serverError(error, res);
     }
-  }
+  };
 
   deleteCategory = async (req, res) => {
     try {

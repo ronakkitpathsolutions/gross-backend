@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Middlewares from "../../middlewares/index.js";
 import CategoryController from "../../controllers/category/index.js";
-import AWS from '../../utils/aws.js'
+import AWS from "../../utils/aws.js";
 
 const categoryRouter = Router();
 
@@ -11,7 +11,7 @@ categoryRouter.post(
     Middlewares.authentication,
     AWS.S3("category").single("image"),
     Middlewares.isOwn,
-    Middlewares.isOwnStore
+    Middlewares.isOwnStore,
   ],
   CategoryController.addNewCategory,
 );
@@ -23,10 +23,10 @@ categoryRouter.put(
     Middlewares.isValidObjectId,
     AWS.S3("category").single("image"),
     Middlewares.isOwn,
-    Middlewares.isOwnStore
+    Middlewares.isOwnStore,
   ],
-  CategoryController.updateCategory
-)
+  CategoryController.updateCategory,
+);
 
 categoryRouter.delete(
   "/delete-category/:_id",

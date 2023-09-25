@@ -40,6 +40,34 @@ const storeSchema = new Schema({
     default: null,
     trim: true,
   },
+  address:{
+    city:{
+      type:String,
+      required:true,
+      trim:true
+    },
+    pin_code:{
+      type:Number,
+      required:true,
+      trim:true
+    },
+    street:{
+      type:String,
+      required:true,
+      trim:true
+    },
+    country : {
+      type:String,
+      required:true,
+      trim:true
+    },
+    state:{
+      type:String,
+      required:true,
+      trim:true
+    }
+
+  }
 });
 
 export default mongoose.model("Stores", storeSchema);

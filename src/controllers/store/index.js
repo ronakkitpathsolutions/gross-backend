@@ -7,6 +7,7 @@ import {
   TYPES,
 } from "../../utils/constant.js";
 import { response, serverError } from "../../utils/functions.js";
+import mongoose from "mongoose";
 
 class StoreController {
   constructor() {
@@ -15,7 +16,17 @@ class StoreController {
 
   createStore = async (req, res) => {
     try {
-      const { user_id, store_name, contact, ...body } = req.body;
+      const {
+        user_id,
+        store_name,
+        contact,
+        city,
+        state,
+        street,
+        country,
+        pin_code,
+        ...body
+      } = req.body;
 
       const { store_image, store_banner } = req.files;
 
@@ -23,13 +34,18 @@ class StoreController {
         user_id,
         store_name,
         contact,
+        city,
+        state,
+        street,
+        country,
+        pin_code,
       ]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -38,12 +54,19 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const data = new Store({
         user_id,
         store_name,
+        address: {
+          city,
+          state,
+          street,
+          country,
+          pin_code,
+        },
         info: {
           contact,
           email: body?.email,
@@ -62,12 +85,109 @@ class StoreController {
         response({
           type: TYPES.SUCCESS,
           data: storeData,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
     }
   };
+
+  getAllStores = async (req, res) => {
+    try {
+      const data = await Store.find().select({
+        __v: 0,
+        created_At: 0,
+        store_banner: 0,
+        user_id: 0,
+        store_banner: 0,
+      });
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data,
+        })
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  getStoreById = async (req, res) => {
+    try {
+      const { _id } = req.params
+
+      const isAllObjectId = Helper.isAllObjectId([_id]);
+      if (!isAllObjectId)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          })
+        );
+
+      const data = await Store.findById(_id).select({
+        __v: 0,
+        created_At: 0
+      })
+      if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data
+        })
+      )
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
+  editStore = async (req, res) => {
+    try {
+
+      const { store_image, store_banner } = req.files;
+      const { store_id, user_id, country, street, pin_code, state, city, email, contact, store_name } = req.body
+
+      const currentData = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
+
+      const { info, address } = currentData
+
+      await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id }, {
+        store_name,
+        store_image: store_image?.length ? store_image?.map((val) => val?.location)?.toString() : currentData?.store_image,
+        store_banner: store_banner?.length ? store_banner?.map((val) => val?.location)?.toString() : currentData?.store_banner,
+        address: { ...address, ...Helper.allFieldsAreNotRequired({ country, street, pin_code, state, city }) },
+        info: { ...info, ...Helper.allFieldsAreNotRequired({ email, contact }) }
+      })
+
+      const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id }).select({
+        __v: 0,
+        created_At: 0
+      })
+
+      if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
+
+      return res.status(STATUS_CODES.SUCCESS).json(response({
+        type: TYPES.SUCCESS,
+        data
+      }))
+
+    } catch (error) {
+      serverError(error, res)
+    }
+  }
+
 }
 
 export default new StoreController();

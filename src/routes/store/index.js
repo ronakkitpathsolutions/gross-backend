@@ -15,7 +15,24 @@ storeRouter.post(
     ]),
     Middlewares.onlyForStoreAdmin,
   ],
-  StoreController.createStore,
+  StoreController.createStore
 );
+
+storeRouter.put(
+  "/update-store",
+  [
+    Middlewares.authentication,
+    AWS.S3("stores").fields([
+      { name: "store_banner", maxCount: 1 },
+      { name: "store_image", maxCount: 1 },
+    ]),
+    Middlewares.isOwnStore,
+  ],
+  StoreController.editStore
+);
+
+storeRouter.get("/stores", StoreController.getAllStores);
+
+storeRouter.get("/stores/:_id", StoreController.getStoreById);
 
 export default storeRouter;

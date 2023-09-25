@@ -15,9 +15,9 @@ class Helper {
 	};
 
 	allFieldsAreNotRequired = (fields) => {
-		const obj = { ...fields }
+		const obj = {}
 		Object.keys(fields).forEach(val => {
-			if (val !== undefined) {
+			if (val !== undefined && !!fields[val]) {
 				obj[val] = fields[val]
 			}
 		})

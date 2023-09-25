@@ -116,46 +116,33 @@ class StoreController {
     try {
 
       const { store_image, store_banner } = req.files;
-      const { store_id, user_id } = req.body
+      const { store_id, user_id, country, street, pin_code, state, city, email, contact, store_name } = req.body
 
+      const currentData = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
 
+      const { info, address } = currentData
 
-      const data = Helper.allFieldsAreNotRequired({ country, street, pin_code, })
+      await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id }, {
+        store_name,
+        store_image: store_image?.length ? store_image?.map((val) => val?.location)?.toString() : currentData?.store_image,
+        store_banner: store_banner?.length ? store_banner?.map((val) => val?.location)?.toString() : currentData?.store_banner,
+        address: { ...address, ...Helper.allFieldsAreNotRequired({ country, street, pin_code, state, city }) },
+        info: { ...info, ...Helper.allFieldsAreNotRequired({ email, contact }) }
+      })
 
-      return res.json(data)
-      // if (isAllFieldRequired) return res.status(STATUS_CODES.BAD_REQUEST).json(
-      //   response({
-      //     type: TYPES.ERROR,
-      //     message: "All fields are required."
-      //   })
-      // )
+      const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
 
-      // const updateData = {}
+      if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND
+        })
+      )
 
-      // if (req.body.email) {
-      //   updateData['info'] = { email: req.body.email }
-      // }
-
-
-
-      // await Store.findOneAndUpdate({ _id: new mongoose.Types.ObjectId(store_id), user_id }, {
-      //   ...updateData
-      // })
-
-      // const data = await Store.findOne({ _id: new mongoose.Types.ObjectId(store_id), user_id })
-
-      // if (!data) return res.status(STATUS_CODES.NOT_FOUND).json(
-      //   response({
-      //     type: TYPES.ERROR,
-      //     message: RESPONSE_MESSAGES.NOT_FOUND
-      //   })
-      // )
-
-      // return res.status(STATUS_CODES.SUCCESS).json(response({
-      //   type: TYPES.SUCCESS,
-      //   data
-      // }))
-
+      return res.status(STATUS_CODES.SUCCESS).json(response({
+        type: TYPES.SUCCESS,
+        data
+      }))
 
     } catch (error) {
       serverError(error, res)

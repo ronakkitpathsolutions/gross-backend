@@ -79,6 +79,90 @@ class ProductController {
       serverError(error, res);
     }
   };
+
+  getProductById = async (req, res) => {
+    try {
+      const { _id } = req.params;
+
+      const isAllFieldRequired = Helper.allFieldsAreRequired([_id]);
+      if (isAllFieldRequired)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.REQUIRED,
+          }),
+        );
+
+      const isAllObjectId = Helper.isAllObjectId([_id]);
+      if (!isAllObjectId)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.INVALID_ID,
+          }),
+        );
+
+      const data = await Product.findById(_id).select({
+        __v: 0,
+        created_At: 0,
+      });
+      if (!data)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.NOT_FOUND,
+          }),
+        );
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data,
+        }),
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  removeProductById = async (req, res) => {
+    const { _id } = req.params;
+    const { user_id, store_id } = req.body;
+
+    const isAllFieldRequired = Helper.allFieldsAreRequired([user_id, store_id]);
+    if (isAllFieldRequired)
+      return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.REQUIRED,
+        }),
+      );
+
+    const isAllObjectId = Helper.isAllObjectId([user_id, store_id]);
+    if (!isAllObjectId)
+      return res.status(STATUS_CODES.BAD_REQUEST).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.INVALID_ID,
+        }),
+      );
+
+    const isDeleted = await Product.findByIdAndDelete(_id);
+    if (!isDeleted)
+      return res.status(STATUS_CODES.NOT_FOUND).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.NOT_FOUND,
+        }),
+      );
+
+    return res.status(STATUS_CODES.SUCCESS).json(
+      response({
+        type: TYPES.ERROR,
+        message: "Product successfully removed from Store",
+      }),
+    );
+  };
 }
 
 export default new ProductController();

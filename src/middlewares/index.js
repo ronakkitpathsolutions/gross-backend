@@ -21,14 +21,12 @@ class MiddleWare {
     const { _id, form_id, attr_id } = req.params;
     if (Types.ObjectId.isValid(_id || form_id || attr_id)) next();
     else
-      res
-        .status(STATUS_CODES.UN_AUTHORIZED)
-        .json(
-          response({
-            type: TYPES.ERROR,
-            message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
-        );
+      res.status(STATUS_CODES.UN_AUTHORIZED).json(
+        response({
+          type: TYPES.ERROR,
+          message: RESPONSE_MESSAGES.INVALID_ID,
+        }),
+      );
   };
 
   authentication = async (req, res, next) => {

@@ -1,13 +1,14 @@
 import mongoose, { Schema } from "mongoose";
 
 const categorySchema = new Schema({
-  created_At: {
-    type: Date,
-    default: Date.now,
-  },
   category: {
     type: String,
     required: true,
+    trim: true,
+  },
+  image: {
+    type: String,
+    default: null,
     trim: true,
   },
   store_id: {

@@ -10,7 +10,7 @@ class Helper {
         fields === undefined ||
         fields === "" ||
         String(fields).trim() === "" ||
-        fields?.length === 0,
+        fields?.length === 0
     );
   };
 
@@ -61,6 +61,12 @@ class Helper {
         ...data,
       },
     };
+  };
+
+  sorting = (data, params) => {
+    if (params == "asc") return data.sort((a, b) => a.price - b.price);
+
+    if (params == "desc") return data.sort((a, b) => b.price - a.price);
   };
 }
 

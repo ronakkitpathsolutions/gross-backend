@@ -8,6 +8,7 @@ import {
 } from "../../utils/constant.js";
 import Category from "../../models/category/index.js";
 import SubCategory from "../../models/sub-category/index.js";
+import products from "../../models/products/index.js";
 
 class SubCategoryController {
   constructor() {
@@ -27,7 +28,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([store_id, category_id]);
@@ -36,7 +37,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const isExistCategory = await Category.findById(category_id);
@@ -45,7 +46,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: "Category not found.",
-          }),
+          })
         );
 
       const isExistSubCategory = await SubCategory.findOne({ sub_category });
@@ -55,7 +56,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: "Sub category already exist.",
-          }),
+          })
         );
 
       const data = new SubCategory({
@@ -71,7 +72,7 @@ class SubCategoryController {
         response({
           type: TYPES.SUCCESS,
           message: "Sub-Category successfully added.",
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -85,11 +86,46 @@ class SubCategoryController {
       const data = await SubCategory.find({ category_id: _id }).select({
         __v: 0,
       });
+
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        }),
+        })
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  getByCategory = async (req, res) => {
+    try {
+      const { sub_category } = req.params;
+      const { sort } = req.query;
+
+      const isExistCategory = await SubCategory.find({ sub_category });
+      if (!isExistCategory)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: "category not found",
+          })
+        );
+      const data = await products.find({ sub_category });
+      if (sort) {
+        const SortingData = await Helper.sorting(data, sort);
+        return res.status(STATUS_CODES.SUCCESS).json(
+          response({
+            type: TYPES.SUCCESS,
+            SortingData,
+          })
+        );
+      }
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data,
+        })
       );
     } catch (error) {
       serverError(error, res);

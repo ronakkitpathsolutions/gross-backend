@@ -26,7 +26,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const data = new Product({
@@ -36,7 +36,8 @@ class ProductController {
         price,
         product_image: req.file ? req.file?.location : null,
         product_description: body?.product_description || null,
-        category: body?.category || null,
+        category: body?.category,
+        sub_category: body?.sub_category,
         manufacturer_by: {
           name: body?.name || null,
           email: body?.email || null,
@@ -51,7 +52,7 @@ class ProductController {
         response({
           type: TYPES.SUCCESS,
           data: product,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -61,15 +62,28 @@ class ProductController {
   getAllProducts = async (req, res) => {
     try {
       const { store_id } = req.body;
+      const { sort } = req.query;
+
       const data = await Product.find({ store_id }).select({
         __v: 0,
       });
+
+      if (sort) {
+        const SortingData = await Helper.sorting(data, sort);
+        return res.status(STATUS_CODES.SUCCESS).json(
+          response({
+            type: TYPES.SUCCESS,
+            SortingData,
+          })
+        );
+      }
+
       if (!data)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          }),
+          })
         );
 
       return res
@@ -90,7 +104,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([_id]);
@@ -99,7 +113,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const data = await Product.findById(_id).select({
@@ -111,14 +125,14 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          }),
+          })
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -135,7 +149,7 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.REQUIRED,
-        }),
+        })
       );
 
     const isAllObjectId = Helper.isAllObjectId([user_id, store_id]);
@@ -144,7 +158,7 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        }),
+        })
       );
 
     const isDeleted = await Product.findByIdAndDelete(_id);
@@ -153,14 +167,34 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        }),
+        })
       );
 
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.ERROR,
         message: "Product successfully removed from Store",
-      }),
+      })
+    );
+  };
+
+  searchProduct = async (req, res) => {
+    const { name } = req.query;
+    if (name) {
+      const regex = new RegExp(`.*${name}.*`, "i");
+      const results = await Product.find({ product_name: regex });
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          results,
+        })
+      );
+    }
+    return res.status(STATUS_CODES.NOT_FOUND).json(
+      response({
+        type: TYPES.ERROR,
+        message: RESPONSE_MESSAGES,
+      })
     );
   };
 }

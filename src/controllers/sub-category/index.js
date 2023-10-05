@@ -100,6 +100,7 @@ class SubCategoryController {
 
   getByCategory = async (req, res) => {
     try {
+      const { store_id } = req.body;
       const { sub_category } = req.params;
       const { sort } = req.query;
 
@@ -111,7 +112,7 @@ class SubCategoryController {
             message: "category not found",
           })
         );
-      const data = await products.find({ sub_category });
+      const data = await products.find({ sub_category, store_id });
       if (sort) {
         const SortingData = await Helper.sorting(data, sort);
         return res.status(STATUS_CODES.SUCCESS).json(

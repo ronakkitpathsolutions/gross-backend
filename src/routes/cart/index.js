@@ -7,22 +7,22 @@ const cartRouter = Router();
 cartRouter.post(
   "/cart/add",
   [MiddleWares.authentication, MiddleWares.isOwn],
-  CartController.addToCart,
+  CartController.addToCart
 );
 cartRouter.delete(
   "/cart/remove/:_id",
   [MiddleWares.authentication],
-  CartController.removeCartProduct,
+  CartController.removeCartProduct
 );
 cartRouter.get(
   "/cart",
   [MiddleWares.authentication, MiddleWares.isOwn],
-  CartController.getAllCart,
+  CartController.getAllCart
 );
 
 cartRouter.put(
   "/cart/edit/:_id",
   [MiddleWares.authentication],
-  CartController.editCart,
+  CartController.editCart
 );
 export default cartRouter;

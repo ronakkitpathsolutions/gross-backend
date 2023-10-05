@@ -11,7 +11,7 @@ class Helper {
         fields === undefined ||
         fields === "" ||
         String(fields).trim() === "" ||
-        fields?.length === 0
+        fields?.length === 0,
     );
   };
 

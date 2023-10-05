@@ -18,7 +18,7 @@ router.get("/", async (req, res) =>
   res.json({
     type: TYPES.SUCCESS,
     message: "Server started.",
-  })
+  }),
 );
 router.use(authRouter);
 router.use(userRouter);

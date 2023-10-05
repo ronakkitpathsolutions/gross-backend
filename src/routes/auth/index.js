@@ -10,7 +10,7 @@ authRouter.post("/user/login", AuthController.loginUser);
 authRouter.put(
   "/user/change-password",
   [MiddleWares.authentication, MiddleWares.getAccessByUserId],
-  AuthController.resetPassword
+  AuthController.resetPassword,
 );
 authRouter.get(
   "/profile/:_id",
@@ -19,7 +19,7 @@ authRouter.get(
     MiddleWares.getAccessByUserId,
     MiddleWares.isValidObjectId,
   ],
-  AuthController.getProfile
+  AuthController.getProfile,
 );
 authRouter.put(
   "/profile/:_id",
@@ -29,25 +29,25 @@ authRouter.put(
     MiddleWares.isValidObjectId,
     AWS.S3("profiles").single("profile"),
   ],
-  AuthController.updateProfile
+  AuthController.updateProfile,
 );
 
 authRouter.post(
   "/admin/master-access",
   [MiddleWares.authentication, MiddleWares.isAdmin],
-  AuthController.masterLogin
+  AuthController.masterLogin,
 );
 
 authRouter.post(
   "/user/forgot-password",
   [MiddleWares.authentication],
-  AuthController.forgotPassword
+  AuthController.forgotPassword,
 );
 
 authRouter.post(
   "/user/new-password",
   [MiddleWares.authentication],
-  AuthController.newPassword
+  AuthController.newPassword,
 );
 
 export default authRouter;

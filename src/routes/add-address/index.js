@@ -6,19 +6,19 @@ const addressRouter = Router();
 addressRouter.post(
   "/add-address",
   [Middlewares.authentication],
-  AddressController.addAddress
+  AddressController.addAddress,
 );
 
 addressRouter.delete(
   "/remove-address/:address_id",
   [Middlewares.authentication],
-  AddressController.deleteAddress
+  AddressController.deleteAddress,
 );
 
 addressRouter.get(
   "/get-all-address/:user_id",
   [Middlewares.authentication],
-  AddressController.getUserAddress
+  AddressController.getUserAddress,
 );
 
 addressRouter.get("/get-address", AddressController.getAllAddress);
@@ -26,7 +26,7 @@ addressRouter.get("/get-address", AddressController.getAllAddress);
 addressRouter.put(
   "/update-address/:address_id",
   [Middlewares.authentication],
-  AddressController.editAddress
+  AddressController.editAddress,
 );
 
 export default addressRouter;

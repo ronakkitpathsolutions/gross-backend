@@ -28,7 +28,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([store_id, category_id]);
@@ -37,7 +37,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isExistCategory = await Category.findById(category_id);
@@ -46,7 +46,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: "Category not found.",
-          })
+          }),
         );
 
       const isExistSubCategory = await SubCategory.findOne({ sub_category });
@@ -56,7 +56,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: "Sub category already exist.",
-          })
+          }),
         );
 
       const data = new SubCategory({
@@ -72,7 +72,7 @@ class SubCategoryController {
         response({
           type: TYPES.SUCCESS,
           message: "Sub-Category successfully added.",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -91,7 +91,7 @@ class SubCategoryController {
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -110,7 +110,7 @@ class SubCategoryController {
           response({
             type: TYPES.ERROR,
             message: "category not found",
-          })
+          }),
         );
       const data = await products.find({ sub_category, store_id });
       if (sort) {
@@ -119,14 +119,14 @@ class SubCategoryController {
           response({
             type: TYPES.SUCCESS,
             SortingData,
-          })
+          }),
         );
       }
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);

@@ -14,7 +14,7 @@ productRouter.post(
     Middlewares.onlyForStoreAdmin,
     Middlewares.isOwnStore,
   ],
-  ProductController.createProduct
+  ProductController.createProduct,
 );
 productRouter.get("/get-products", ProductController.getAllProducts);
 productRouter.get("/get-product/:_id", ProductController.getProductById);
@@ -25,7 +25,7 @@ productRouter.delete(
     Middlewares.onlyForStoreAdmin,
     Middlewares.isOwnStore,
   ],
-  ProductController.removeProductById
+  ProductController.removeProductById,
 );
 
 //for super admin
@@ -37,12 +37,12 @@ productRouter.post(
     Middlewares.isAdmin,
     Middlewares.isOwnStore,
   ],
-  ProductController.createProduct
+  ProductController.createProduct,
 );
 productRouter.delete(
   "/admin/remove-product/:_id",
   [Middlewares.authentication, Middlewares.isAdmin, Middlewares.isOwnStore],
-  ProductController.removeProductById
+  ProductController.removeProductById,
 );
 
 productRouter.get("/search-product", ProductController.searchProduct);

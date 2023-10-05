@@ -12,18 +12,18 @@ subCategoryRouter.post(
     AWS.S3("sub-category").single("image"),
     Middlewares.isOwnStore,
   ],
-  SubCategoryController.createSubCategory
+  SubCategoryController.createSubCategory,
 );
 
 subCategoryRouter.get(
   "/sub-category/:_id",
   [Middlewares.isValidObjectId],
-  SubCategoryController.getAllSubCategory
+  SubCategoryController.getAllSubCategory,
 );
 
 subCategoryRouter.get(
   "/get-by-category/:sub_category",
-  SubCategoryController.getByCategory
+  SubCategoryController.getByCategory,
 );
 
 export default subCategoryRouter;

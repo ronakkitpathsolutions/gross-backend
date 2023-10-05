@@ -26,7 +26,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const data = new Product({
@@ -52,7 +52,7 @@ class ProductController {
         response({
           type: TYPES.SUCCESS,
           data: product,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -74,7 +74,7 @@ class ProductController {
           response({
             type: TYPES.SUCCESS,
             SortingData,
-          })
+          }),
         );
       }
 
@@ -83,7 +83,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res
@@ -104,7 +104,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([_id]);
@@ -113,7 +113,7 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const data = await Product.findById(_id).select({
@@ -125,14 +125,14 @@ class ProductController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -149,7 +149,7 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.REQUIRED,
-        })
+        }),
       );
 
     const isAllObjectId = Helper.isAllObjectId([user_id, store_id]);
@@ -158,7 +158,7 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        })
+        }),
       );
 
     const isDeleted = await Product.findByIdAndDelete(_id);
@@ -167,14 +167,14 @@ class ProductController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        })
+        }),
       );
 
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.ERROR,
         message: "Product successfully removed from Store",
-      })
+      }),
     );
   };
 
@@ -187,14 +187,14 @@ class ProductController {
         response({
           type: TYPES.SUCCESS,
           results,
-        })
+        }),
       );
     }
     return res.status(STATUS_CODES.NOT_FOUND).json(
       response({
         type: TYPES.ERROR,
         message: RESPONSE_MESSAGES,
-      })
+      }),
     );
   };
 }

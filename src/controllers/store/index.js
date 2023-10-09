@@ -9,7 +9,6 @@ import {
 import { response, serverError } from "../../utils/functions.js";
 import mongoose from "mongoose";
 import User from "../../models/user/index.js";
-import { object } from "webidl-conversions";
 
 class StoreController {
   constructor() {

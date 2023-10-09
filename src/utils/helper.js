@@ -11,7 +11,7 @@ class Helper {
         fields === undefined ||
         fields === "" ||
         String(fields).trim() === "" ||
-        fields?.length === 0,
+        fields?.length === 0
     );
   };
 
@@ -64,13 +64,27 @@ class Helper {
     };
   };
 
-  comparator = (a, b, orderBy) => b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0
+  comparator = (a, b, orderBy) =>
+    b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0;
 
   applySortFilter = (array = [], key, orderBy) => {
     if (key && orderBy) {
-      return array.sort((a, b) => orderBy === 'desc' ? this.comparator(a, b, key) : -this.comparator(a, b, key))
-    } else return array
-  }
+      return array.sort((a, b) =>
+        orderBy === "desc"
+          ? this.comparator(a, b, key)
+          : -this.comparator(a, b, key)
+      );
+    } else return array;
+  };
+
+  modifyObj = (obj = {}) => {
+    if (!Object.keys(obj)?.length) return {};
+    const object = {};
+    Object.keys(obj).forEach((item) => {
+      (object["key"] = item), (object["value"] = obj[item]);
+    });
+    return object;
+  };
 
   resetEmailFormat = (PASSWORD_RESET_LINK) => {
     return `<!DOCTYPE html>
@@ -120,7 +134,7 @@ class Helper {
                 </tr>
                 <tr>
                   <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
-                    Thanks!<br>Arengu team
+                    Thanks!<br>Gross App
                   </td>
                 </tr>
               </table>
@@ -134,27 +148,84 @@ class Helper {
     </html>`;
   };
 
-  sendResetEmail = async (recipientEmail, resetEmailFormat) => {
+  thankyouEmail = (STORE_NAME) => {
+    return `<!DOCTYPE html>
+    <html>
+    <head> 
+      <style>
+         /* Add any additional CSS styles here if needed */
+      </style>
+    </head>
+    <body style="background-color: #fafbfc; margin: 0; padding: 0;">
+    <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+      <td style="padding: 20px;">
+       <!-- Content Section -->
+        <table role="presentation" cellspacing="0" cellpadding="0" width="100%" style="background-color: #fff; padding: 20px 0;">
+         <tr>
+            <td align="center" valign="middle" >
+              <img src="https://nova-ecom.s3.amazonaws.com/thank-you.jpg" width="200px"  alt="Logo">
+            </td>
+          </tr>
+          <tr>
+            <td align="center" valign="middle">
+              <table role="presentation" cellspacing="0" cellpadding="0" width="100%">
+                <tr>
+                  <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
+                    <span style="font-size:25px"><strong>Your exceptional work<br/> in creating our online store is greatly appreciated.<br/><br/><span />
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
+                    <span>Hello,${STORE_NAME}
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
+                    Your exceptional talent in creating our website's store has not only transformed our online presence but also opened doors to endless opportunities.<br/> Thank you for turning our dreams into a digital reality!        <br/> <br/>
+                 </td>          
+                </tr>
+                <tr>
+                
+               <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
+                    I can't thank you enough for crafting an outstanding store on our website. <br />Your skills and dedication have not only enhanced our online presence but also boosted our business prospects.<br /> Here's to a successful journey ahead!
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="font-size: 16px; font-family: 'Open Sans', Helvetica, Arial, sans-serif; padding: 0 25px;">
+                  <br/>
+                    Thanks!<br>Gross App
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    </table>
+    </body>
+    </html>`;
+  };
+
+  sendResetEmail = async (recipientEmail, EmailFormat, titleMessage) => {
     try {
-      // Create a transporter using your email service provider's SMTP settings
       const transporter = nodemailer.createTransport({
         service: "gmail",
-        secure: false, // Set to true if using a secure connection (e.g., SSL/TLS)
+        secure: false,
         auth: {
           user: "urvashil.itpath@gmail.com",
           pass: "rjfhsbwlwtkihvey",
         },
       });
 
-      // Compose the email message
       const message = {
         from: "abc@gmail.com",
         to: recipientEmail,
-        subject: "Password Reset",
-        html: resetEmailFormat,
+        subject: titleMessage,
+        html: EmailFormat,
       };
 
-      // Send the email
       const info = await transporter.sendMail(message);
     } catch (error) {
       console.error("Error sending reset email:", error);

@@ -39,7 +39,7 @@ class AddressController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -48,7 +48,7 @@ class AddressController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const isExist = await User.findOne({ _id: user_id });
@@ -57,7 +57,7 @@ class AddressController {
           response({
             type: TYPES.ERROR,
             message: "User Not Found",
-          }),
+          })
         );
       const data = new Address({
         state,
@@ -73,7 +73,7 @@ class AddressController {
         response({
           type: TYPES.SUCCESS,
           data,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -89,7 +89,7 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.REQUIRED,
-        }),
+        })
       );
 
     const isAllObjectId = Helper.isAllObjectId([address_id]);
@@ -98,7 +98,7 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        }),
+        })
       );
 
     const isDeleted = await Address.findByIdAndDelete({ _id: address_id });
@@ -107,13 +107,13 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        }),
+        })
       );
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
-        type: TYPES.ERROR,
+        type: TYPES.SUCCESS,
         message: "Address successfully removed",
-      }),
+      })
     );
   };
 
@@ -126,7 +126,7 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.REQUIRED,
-        }),
+        })
       );
 
     const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -135,7 +135,7 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        }),
+        })
       );
     const isExist = await Address.find({ user_id }).select({
       user_id: 0,
@@ -146,13 +146,13 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        }),
+        })
       );
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.SUCCESS,
         data: isExist,
-      }),
+      })
     );
   };
 
@@ -162,7 +162,7 @@ class AddressController {
       response({
         type: TYPES.SUCCESS,
         data,
-      }),
+      })
     );
   };
 
@@ -177,7 +177,7 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        }),
+        })
       );
 
     await Address.findOneAndUpdate(
@@ -189,7 +189,7 @@ class AddressController {
         address_line1,
         pin_code,
         city,
-      },
+      }
     );
     const data = await Address.findOne({
       _id: new mongoose.Types.ObjectId(address_id),
@@ -199,14 +199,14 @@ class AddressController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        }),
+        })
       );
 
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.SUCCESS,
         data,
-      }),
+      })
     );
   };
 }

@@ -8,6 +8,8 @@ import {
 } from "../../utils/constant.js";
 import { response, serverError } from "../../utils/functions.js";
 import mongoose from "mongoose";
+import User from "../../models/user/index.js";
+import { object } from "webidl-conversions";
 
 class StoreController {
   constructor() {
@@ -45,7 +47,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -54,7 +56,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const data = new Store({
@@ -80,32 +82,18 @@ class StoreController {
       });
 
       const storeData = await data.save();
+      const UserData = await User.findOne({ _id: user_id });
 
+      await Helper.sendResetEmail(
+        UserData?.email,
+        await Helper.thankyouEmail(store_name),
+        "Welcome to Gross App"
+      );
       return res.status(STATUS_CODES.CREATED).json(
         response({
           type: TYPES.SUCCESS,
           data: storeData,
-        }),
-      );
-    } catch (error) {
-      serverError(error, res);
-    }
-  };
-
-  getAllStores = async (req, res) => {
-    try {
-      const data = await Store.find().select({
-        __v: 0,
-        created_At: 0,
-        store_banner: 0,
-        user_id: 0,
-        store_banner: 0,
-      });
-      return res.status(STATUS_CODES.SUCCESS).json(
-        response({
-          type: TYPES.SUCCESS,
-          data,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -122,7 +110,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const data = await Store.findById(_id).select({
@@ -134,14 +122,14 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          }),
+          })
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -195,7 +183,7 @@ class StoreController {
             ...info,
             ...Helper.allFieldsAreNotRequired({ email, contact }),
           },
-        },
+        }
       );
 
       const data = await Store.findOne({
@@ -211,14 +199,14 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          }),
+          })
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        }),
+        })
       );
     } catch (error) {
       serverError(error, res);
@@ -238,7 +226,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          }),
+          })
         );
 
       const isAllObjectId = Helper.isAllObjectId([store_id, user_id]);
@@ -247,7 +235,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          }),
+          })
         );
 
       const isDeleted = await Store.findByIdAndDelete({ _id: store_id });
@@ -256,15 +244,78 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          }),
+          })
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.ERROR,
           message: "Store successfully removed",
-        }),
+        })
       );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  getStore = async (req, res) => {
+    const { query } = req;
+    try {
+      if (!Object.keys(query).length) {
+        const data = await Store.find().select({
+          __v: 0,
+          created_At: 0,
+          store_banner: 0,
+          user_id: 0,
+          store_banner: 0,
+        });
+        return res.status(STATUS_CODES.SUCCESS).json(
+          response({
+            type: TYPES.SUCCESS,
+            data,
+          })
+        );
+      } else {
+        const { key, value } = Helper.modifyObj(query);
+        const pipeline = [
+          {
+            $addFields: {
+              user_id: {
+                $toObjectId: "$user_id",
+              },
+            },
+          },
+          {
+            $lookup: {
+              from: "users",
+              localField: "user_id",
+              foreignField: "_id",
+              as: "result",
+            },
+          },
+          {
+            $match: {
+              [`result.${key}`]: value,
+            },
+          },
+          {
+            $project: {
+              user_id: 0,
+              result: 0,
+              __v: 0,
+              created_At: 0,
+            },
+          },
+        ];
+
+        const storeData = await Store.aggregate(pipeline);
+        return res.status(STATUS_CODES.SUCCESS).json(
+          response({
+            type: TYPES.SUCCESS,
+            storeData,
+          })
+        );
+      }
     } catch (error) {
       serverError(error, res);
     }

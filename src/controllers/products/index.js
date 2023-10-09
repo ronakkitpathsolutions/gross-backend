@@ -62,21 +62,11 @@ class ProductController {
   getAllProducts = async (req, res) => {
     try {
       const { store_id } = req.body;
-      const { sort } = req.query;
+      const { order, orderBy } = req.query;
 
       const data = await Product.find({ store_id }).select({
         __v: 0,
       });
-
-      if (sort) {
-        const SortingData = await Helper.sorting(data, sort);
-        return res.status(STATUS_CODES.SUCCESS).json(
-          response({
-            type: TYPES.SUCCESS,
-            SortingData,
-          }),
-        );
-      }
 
       if (!data)
         return res.status(STATUS_CODES.NOT_FOUND).json(
@@ -88,7 +78,7 @@ class ProductController {
 
       return res
         .status(STATUS_CODES.SUCCESS)
-        .json(response({ type: TYPES.SUCCESS, data }));
+        .json(response({ type: TYPES.SUCCESS, data: (orderBy && order) ? Helper.applySortFilter(data, order, orderBy) : data }));
     } catch (error) {
       serverError(error, res);
     }

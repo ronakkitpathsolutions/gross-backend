@@ -102,7 +102,7 @@ class SubCategoryController {
     try {
       const { store_id } = req.body;
       const { sub_category } = req.params;
-      const { sort } = req.query;
+      const { order, orderBy } = req.query;
 
       const isExistCategory = await SubCategory.find({ sub_category });
       if (!isExistCategory)
@@ -112,20 +112,14 @@ class SubCategoryController {
             message: "category not found",
           }),
         );
-      const data = await products.find({ sub_category, store_id });
-      if (sort) {
-        const SortingData = await Helper.sorting(data, sort);
-        return res.status(STATUS_CODES.SUCCESS).json(
-          response({
-            type: TYPES.SUCCESS,
-            SortingData,
-          }),
-        );
-      }
+      const data = await products.find({ sub_category, store_id }).select({
+        _v: 0
+      });
+
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
-          data,
+          data: (orderBy && order) ? Helper.applySortFilter(data, order, orderBy) : data
         }),
       );
     } catch (error) {

@@ -64,14 +64,13 @@ class Helper {
     };
   };
 
-  sorting = (data, params) => {
-    if (params == "asc") return data.sort((a, b) => a.price - b.price);
+  comparator = (a, b, orderBy) => b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0
 
-    if (params == "desc") return data.sort((a, b) => b.price - a.price);
-
-    if (params == "byname")
-      return data.sort((a, b) => a.product_name.localeCompare(b.product_name));
-  };
+  applySortFilter = (array = [], key, orderBy) => {
+    if (key && orderBy) {
+      return array.sort((a, b) => orderBy === 'desc' ? this.comparator(a, b, key) : -this.comparator(a, b, key))
+    } else return array
+  }
 
   resetEmailFormat = (PASSWORD_RESET_LINK) => {
     return `<!DOCTYPE html>

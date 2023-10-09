@@ -366,11 +366,14 @@ class AuthController {
         {
           user_id: isExistEmail?._id,
           email: isExistEmail?.email,
+          role: isExistEmail?.role,
+          username: isExistEmail?.username,
+          contact: isExistEmail?.contact,
         },
         15,
       );
 
-      const resetEmailContent = await Helper.resetEmailFormat(
+      const resetEmailContent = Helper.resetEmailFormat(
         `${link}?token=${generateToken}`,
       );
       await Helper.sendResetEmail(email, resetEmailContent);

@@ -44,4 +44,10 @@ authRouter.post(
   AuthController.forgotPassword,
 );
 
+authRouter.post(
+  "/user/new-password",
+  [MiddleWares.authentication],
+  AuthController.newPassword,
+);
+
 export default authRouter;

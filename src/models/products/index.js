@@ -24,14 +24,18 @@ const productSchema = new Schema({
   },
   category: {
     type: String,
-    required: false,
-    default: null,
+    required: true,
     trim: true,
   },
   product_image: {
     type: String,
     required: false,
     default: null,
+    trim: true,
+  },
+  sub_category: {
+    type: String,
+    required: true,
     trim: true,
   },
   price: {

@@ -8,6 +8,7 @@ import {
 } from "../../utils/constant.js";
 import Category from "../../models/category/index.js";
 import SubCategory from "../../models/sub-category/index.js";
+import products from "../../models/products/index.js";
 
 class SubCategoryController {
   constructor() {
@@ -85,10 +86,40 @@ class SubCategoryController {
       const data = await SubCategory.find({ category_id: _id }).select({
         __v: 0,
       });
+
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
+        }),
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  getByCategory = async (req, res) => {
+    try {
+      const { store_id } = req.body;
+      const { sub_category } = req.params;
+      const { order, orderBy } = req.query;
+
+      const isExistCategory = await SubCategory.find({ sub_category });
+      if (!isExistCategory)
+        return res.status(STATUS_CODES.NOT_FOUND).json(
+          response({
+            type: TYPES.ERROR,
+            message: "category not found",
+          }),
+        );
+      const data = await products.find({ sub_category, store_id }).select({
+        _v: 0
+      });
+
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          data: (orderBy && order) ? Helper.applySortFilter(data, order, orderBy) : data
         }),
       );
     } catch (error) {

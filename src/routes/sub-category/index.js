@@ -21,4 +21,9 @@ subCategoryRouter.get(
   SubCategoryController.getAllSubCategory,
 );
 
+subCategoryRouter.get(
+  "/get-by-category/:sub_category",
+  SubCategoryController.getByCategory,
+);
+
 export default subCategoryRouter;

@@ -342,7 +342,7 @@ class AuthController {
 
   forgotPassword = async (req, res) => {
     try {
-      const { email } = req.body;
+      const { email, link } = req.body;
 
       const isAllFieldRequired = Helper.allFieldsAreRequired([email]);
       if (isAllFieldRequired)
@@ -362,17 +362,66 @@ class AuthController {
           }),
         );
 
-      const generateToken = await JWT.generateNewToken({
-        user_id: isExistEmail?._id,
-        email: isExistEmail?.email,
-        role: isExistEmail?.role,
-        username: isExistEmail?.username,
-        contact: isExistEmail?.contact,
+      const generateToken = await JWT.generateNewToken(
+        {
+          user_id: isExistEmail?._id,
+          email: isExistEmail?.email,
+          role: isExistEmail?.role,
+          username: isExistEmail?.username,
+          contact: isExistEmail?.contact,
+        },
+        15,
+      );
+
+      const resetEmailContent = Helper.resetEmailFormat(
+        `${link}?token=${generateToken}`,
+      );
+      await Helper.sendResetEmail(email, resetEmailContent);
+      return res.status(STATUS_CODES.SUCCESS).json(
+        response({
+          type: TYPES.SUCCESS,
+          message: "Reset Link Sent,Check your mail",
+        }),
+      );
+    } catch (error) {
+      serverError(error, res);
+    }
+  };
+
+  newPassword = async (req, res) => {
+    try {
+      const { newpassword, token } = req.body;
+      const isAllFieldRequired = Helper.allFieldsAreRequired([
+        newpassword,
+        token,
+      ]);
+      if (isAllFieldRequired)
+        return res.status(STATUS_CODES.BAD_REQUEST).json(
+          response({
+            type: TYPES.ERROR,
+            message: RESPONSE_MESSAGES.REQUIRED,
+          }),
+        );
+
+      const userData = await JWT.verifyUserToken(token);
+      if (!userData)
+        return res.status(STATUS_CODES.UN_AUTHORIZED).json(
+          response({
+            type: TYPES.ERROR,
+            message: "User not found.",
+          }),
+        );
+
+      await User.findByIdAndUpdate(userData?.user_id, {
+        password: await Bcrypt.hashPassword(newpassword),
       });
 
-      return res.json({ token: generateToken });
-
-      // email service
+      return res.status(STATUS_CODES.CREATED).json(
+        response({
+          type: TYPES.SUCCESS,
+          message: "Password reset successfully.",
+        }),
+      );
     } catch (error) {
       serverError(error, res);
     }

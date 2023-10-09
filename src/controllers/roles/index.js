@@ -40,15 +40,15 @@ class RolesController {
         );
       }
 
-      const data = new Roles({
+      const roleData = new Roles({
         name,
         description,
       });
-      const roleData = await data.save();
+      const data = await roleData.save();
       return res.status(STATUS_CODES.CREATED).json(
         response({
           type: TYPES.SUCCESS,
-          data: roleData,
+          data,
         })
       );
     } catch (error) {
@@ -59,7 +59,6 @@ class RolesController {
   removeRoles = async (req, res) => {
     try {
       const { _id } = req.params;
-
       const isAllFieldRequired = Helper.allFieldsAreRequired([_id]);
       if (isAllFieldRequired)
         return res.status(STATUS_CODES.BAD_REQUEST).json(
@@ -77,7 +76,7 @@ class RolesController {
           })
         );
 
-      const isDeleted = await Roles.findByIdAndDelete({ _id });
+      const isDeleted = await Roles.findByIdAndDelete(_id);
       if (!isDeleted)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
@@ -134,16 +133,15 @@ class RolesController {
       );
     }
 
-    await Roles.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(_id) },
+    await Roles.findByIdAndUpdate(_id,
       {
         name,
         description,
       }
     );
-    const data = await Roles.findOne({
-      _id: new mongoose.Types.ObjectId(_id),
-    }).select({ __v: 0 });
+
+    const data = await Roles.findById(_id).select({ __v: 0 });
+
     if (!data)
       return res.status(STATUS_CODES.NOT_FOUND).json(
         response({

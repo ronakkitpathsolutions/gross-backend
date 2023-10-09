@@ -7,7 +7,7 @@ import {
   TYPES,
 } from "../../utils/constant.js";
 import { response, serverError } from "../../utils/functions.js";
-import mongoose from "mongoose";
+import mongoose, { Mongoose } from "mongoose";
 import User from "../../models/user/index.js";
 
 class StoreController {
@@ -85,7 +85,7 @@ class StoreController {
 
       await Helper.sendResetEmail(
         UserData?.email,
-        await Helper.thankyouEmail(store_name),
+        Helper.thankyouEmail(store_name),
         "Welcome to Gross App"
       );
       return res.status(STATUS_CODES.CREATED).json(
@@ -237,7 +237,7 @@ class StoreController {
           })
         );
 
-      const isDeleted = await Store.findByIdAndDelete({ _id: store_id });
+      const isDeleted = await Store.findOneAndDelete({ user_id, _id: new mongoose.Types.ObjectId(store_id) });
       if (!isDeleted)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
@@ -261,7 +261,7 @@ class StoreController {
     const { query } = req;
     try {
       if (!Object.keys(query).length) {
-        const data = await Store.find().select({
+        const data = await Store.find({}).select({
           __v: 0,
           created_At: 0,
           store_banner: 0,

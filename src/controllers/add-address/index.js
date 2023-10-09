@@ -51,7 +51,7 @@ class AddressController {
           })
         );
 
-      const isExist = await User.findOne({ _id: user_id });
+      const isExist = await User.findById(user_id);
       if (!isExist)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
@@ -101,7 +101,7 @@ class AddressController {
         })
       );
 
-    const isDeleted = await Address.findByIdAndDelete({ _id: address_id });
+    const isDeleted = await Address.findByIdAndDelete(address_id);
     if (!isDeleted)
       return res.status(STATUS_CODES.NOT_FOUND).json(
         response({
@@ -119,8 +119,8 @@ class AddressController {
 
   getUserAddress = async (req, res) => {
     const { user_id } = req.params;
-
     const isAllFieldRequired = Helper.allFieldsAreRequired([user_id]);
+
     if (isAllFieldRequired)
       return res.status(STATUS_CODES.BAD_REQUEST).json(
         response({
@@ -157,7 +157,7 @@ class AddressController {
   };
 
   getAllAddress = async (req, res) => {
-    const data = await Address.find().select({ __v: 0 });
+    const data = await Address.find({}).select({ __v: 0 });
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.SUCCESS,
@@ -168,8 +168,7 @@ class AddressController {
 
   editAddress = async (req, res) => {
     const { address_id } = req.params;
-    const { state, country, address_line2, address_line1, pin_code, city } =
-      req.body;
+    const { state, country, address_line2, address_line1, pin_code, city } = req.body;
 
     const isAllObjectId = Helper.isAllObjectId([address_id]);
     if (!isAllObjectId)
@@ -180,8 +179,7 @@ class AddressController {
         })
       );
 
-    await Address.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(address_id) },
+    await Address.findByIdAndUpdate(address_id,
       {
         state,
         country,
@@ -191,9 +189,7 @@ class AddressController {
         city,
       }
     );
-    const data = await Address.findOne({
-      _id: new mongoose.Types.ObjectId(address_id),
-    });
+    const data = await Address.findById(address_id);
     if (!data)
       return res.status(STATUS_CODES.NOT_FOUND).json(
         response({

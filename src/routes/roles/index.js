@@ -6,13 +6,13 @@ const rolesRouter = Router();
 
 rolesRouter.post(
   "/create-roles",
-  [MiddleWares.isAdmin, MiddleWares.authentication],
+  [MiddleWares.authentication, MiddleWares.isAdmin],
   RolesController.createRoles
 );
 
 rolesRouter.delete(
   "/remove-roles/:_id",
-  [MiddleWares.isAdmin, MiddleWares.authentication],
+  [MiddleWares.authentication, MiddleWares.isAdmin],
   RolesController.removeRoles
 );
 

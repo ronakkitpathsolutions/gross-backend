@@ -373,10 +373,11 @@ class AuthController {
         15,
       );
 
-      const resetEmailContent = Helper.resetEmailFormat(
-        `${link}?token=${generateToken}`,
+      await Helper.sendResetEmail(
+        email,
+        Helper.resetEmailFormat(`${link}?token=${generateToken}`),
+        "Password Reset",
       );
-      await Helper.sendResetEmail(email, resetEmailContent);
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,

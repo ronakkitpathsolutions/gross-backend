@@ -45,6 +45,4 @@ productRouter.delete(
   ProductController.removeProductById,
 );
 
-productRouter.get("/search-product", ProductController.searchProduct);
-
 export default productRouter;

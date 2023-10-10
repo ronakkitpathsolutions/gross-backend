@@ -11,6 +11,7 @@ import productRouter from "./products/index.js";
 import cartRouter from "./cart/index.js";
 import subCategoryRouter from "./sub-category/index.js";
 import addressRouter from "./add-address/index.js";
+import rolesRouter from "./roles/index.js";
 
 const router = Router();
 
@@ -29,5 +30,6 @@ router.use(productRouter);
 router.use(cartRouter);
 router.use(subCategoryRouter);
 router.use(addressRouter);
+router.use(rolesRouter);
 
 export default router;

@@ -31,8 +31,6 @@ storeRouter.put(
   StoreController.editStore,
 );
 
-storeRouter.get("/stores", StoreController.getAllStores);
-
 storeRouter.get("/stores/:_id", StoreController.getStoreById);
 
 storeRouter.delete(
@@ -40,5 +38,7 @@ storeRouter.delete(
   [Middlewares.onlyForStoreAdmin, Middlewares.isOwnStore],
   StoreController.removeStore,
 );
+
+storeRouter.get("/getstore", StoreController.getStore);
 
 export default storeRouter;

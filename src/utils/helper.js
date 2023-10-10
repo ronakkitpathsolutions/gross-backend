@@ -11,7 +11,7 @@ class Helper {
         fields === undefined ||
         fields === "" ||
         String(fields).trim() === "" ||
-        fields?.length === 0
+        fields?.length === 0,
     );
   };
 
@@ -72,7 +72,7 @@ class Helper {
       return array.sort((a, b) =>
         orderBy === "desc"
           ? this.comparator(a, b, key)
-          : -this.comparator(a, b, key)
+          : -this.comparator(a, b, key),
       );
     } else return array;
   };
@@ -84,6 +84,21 @@ class Helper {
       (object["key"] = item), (object["value"] = obj[item]);
     });
     return object;
+  };
+
+  paginate = (data = [], page_size = 10, page_number = 1) => {
+    const parsedPageSize = parseInt(page_size) || 10;
+    const parsedPage = parseInt(page_number) || 1;
+    const offset = (parsedPage - 1) * parsedPageSize;
+    const paginatedData = data.slice(offset, offset + parsedPageSize);
+    return {
+      paginatedData,
+      pagination: {
+        page: parsedPage,
+        pageSize: parsedPageSize,
+        total: data?.length,
+      },
+    };
   };
 
   resetEmailFormat = (PASSWORD_RESET_LINK) => {

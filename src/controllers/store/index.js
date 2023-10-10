@@ -46,7 +46,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([user_id]);
@@ -55,7 +55,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const data = new Store({
@@ -86,13 +86,13 @@ class StoreController {
       await Helper.sendResetEmail(
         UserData?.email,
         Helper.thankyouEmail(store_name),
-        "Welcome to Gross App"
+        "Welcome to Gross App",
       );
       return res.status(STATUS_CODES.CREATED).json(
         response({
           type: TYPES.SUCCESS,
           data: storeData,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -109,7 +109,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const data = await Store.findById(_id).select({
@@ -121,14 +121,14 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -182,7 +182,7 @@ class StoreController {
             ...info,
             ...Helper.allFieldsAreNotRequired({ email, contact }),
           },
-        }
+        },
       );
 
       const data = await Store.findOne({
@@ -198,14 +198,14 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -225,7 +225,7 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
 
       const isAllObjectId = Helper.isAllObjectId([store_id, user_id]);
@@ -234,23 +234,26 @@ class StoreController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
-      const isDeleted = await Store.findOneAndDelete({ user_id, _id: new mongoose.Types.ObjectId(store_id) });
+      const isDeleted = await Store.findOneAndDelete({
+        user_id,
+        _id: new mongoose.Types.ObjectId(store_id),
+      });
       if (!isDeleted)
         return res.status(STATUS_CODES.NOT_FOUND).json(
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.ERROR,
           message: "Store successfully removed",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -272,7 +275,7 @@ class StoreController {
           response({
             type: TYPES.SUCCESS,
             data,
-          })
+          }),
         );
       } else {
         const { key, value } = Helper.modifyObj(query);
@@ -312,7 +315,7 @@ class StoreController {
           response({
             type: TYPES.SUCCESS,
             storeData,
-          })
+          }),
         );
       }
     } catch (error) {

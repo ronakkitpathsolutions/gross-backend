@@ -113,13 +113,16 @@ class SubCategoryController {
           }),
         );
       const data = await products.find({ sub_category, store_id }).select({
-        _v: 0
+        _v: 0,
       });
 
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
-          data: (orderBy && order) ? Helper.applySortFilter(data, order, orderBy) : data
+          data:
+            orderBy && order
+              ? Helper.applySortFilter(data, order, orderBy)
+              : data,
         }),
       );
     } catch (error) {

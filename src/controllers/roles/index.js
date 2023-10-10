@@ -27,7 +27,7 @@ class RolesController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
       const existingRole = await Roles.findOne({ name });
 
@@ -36,7 +36,7 @@ class RolesController {
           response({
             type: TYPES.ERROR,
             message: "Role is already added",
-          })
+          }),
         );
       }
 
@@ -49,7 +49,7 @@ class RolesController {
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -65,7 +65,7 @@ class RolesController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.REQUIRED,
-          })
+          }),
         );
       const isAllObjectId = Helper.isAllObjectId([_id]);
       if (!isAllObjectId)
@@ -73,7 +73,7 @@ class RolesController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.INVALID_ID,
-          })
+          }),
         );
 
       const isDeleted = await Roles.findByIdAndDelete(_id);
@@ -82,13 +82,13 @@ class RolesController {
           response({
             type: TYPES.ERROR,
             message: RESPONSE_MESSAGES.NOT_FOUND,
-          })
+          }),
         );
       return res.status(STATUS_CODES.SUCCESS).json(
         response({
           type: TYPES.SUCCESS,
           message: "Roles successfully removed",
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -102,7 +102,7 @@ class RolesController {
         response({
           type: TYPES.SUCCESS,
           data,
-        })
+        }),
       );
     } catch (error) {
       serverError(error, res);
@@ -119,7 +119,7 @@ class RolesController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.INVALID_ID,
-        })
+        }),
       );
 
     const existingRole = await Roles.findOne({ name });
@@ -129,16 +129,14 @@ class RolesController {
         response({
           type: TYPES.ERROR,
           message: "Role is already added",
-        })
+        }),
       );
     }
 
-    await Roles.findByIdAndUpdate(_id,
-      {
-        name,
-        description,
-      }
-    );
+    await Roles.findByIdAndUpdate(_id, {
+      name,
+      description,
+    });
 
     const data = await Roles.findById(_id).select({ __v: 0 });
 
@@ -147,14 +145,14 @@ class RolesController {
         response({
           type: TYPES.ERROR,
           message: RESPONSE_MESSAGES.NOT_FOUND,
-        })
+        }),
       );
 
     return res.status(STATUS_CODES.SUCCESS).json(
       response({
         type: TYPES.SUCCESS,
         data,
-      })
+      }),
     );
   };
 }

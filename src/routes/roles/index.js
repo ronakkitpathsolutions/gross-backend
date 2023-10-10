@@ -7,25 +7,25 @@ const rolesRouter = Router();
 rolesRouter.post(
   "/create-roles",
   [MiddleWares.authentication, MiddleWares.isAdmin],
-  RolesController.createRoles
+  RolesController.createRoles,
 );
 
 rolesRouter.delete(
   "/remove-roles/:_id",
   [MiddleWares.authentication, MiddleWares.isAdmin],
-  RolesController.removeRoles
+  RolesController.removeRoles,
 );
 
 rolesRouter.get(
   "/roles",
   [MiddleWares.authentication, MiddleWares.isAdmin],
-  RolesController.getAllRoles
+  RolesController.getAllRoles,
 );
 
 rolesRouter.put(
   "/edit-roles/:_id",
   [MiddleWares.authentication, MiddleWares.isAdmin],
-  RolesController.editRoles
+  RolesController.editRoles,
 );
 
 export default rolesRouter;

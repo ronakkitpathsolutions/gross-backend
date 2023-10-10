@@ -15,7 +15,7 @@ storeRouter.post(
     ]),
     Middlewares.onlyForStoreAdmin,
   ],
-  StoreController.createStore
+  StoreController.createStore,
 );
 
 storeRouter.put(
@@ -28,7 +28,7 @@ storeRouter.put(
     ]),
     Middlewares.isOwnStore,
   ],
-  StoreController.editStore
+  StoreController.editStore,
 );
 
 storeRouter.get("/stores/:_id", StoreController.getStoreById);
@@ -36,7 +36,7 @@ storeRouter.get("/stores/:_id", StoreController.getStoreById);
 storeRouter.delete(
   "/remove-store",
   [Middlewares.onlyForStoreAdmin, Middlewares.isOwnStore],
-  StoreController.removeStore
+  StoreController.removeStore,
 );
 
 storeRouter.get("/getstore", StoreController.getStore);

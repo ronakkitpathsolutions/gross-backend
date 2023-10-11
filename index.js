@@ -10,7 +10,7 @@ import database from "./src/db/index.js";
 class App {
   constructor() {
     dotenv.config();
-    Engine.loading()
+    Engine.start()
       .then(() => express())
       .then((app) => this.dbConfiguration(app))
       .then((app) => {
@@ -20,6 +20,14 @@ class App {
       .then((app) => {
         console.log("3. server starting.");
         return this.startServer(app);
+      }).then((httpServer) => {
+        return Engine.exhaust(httpServer).on('connection', (socket) => {
+          console.log('socket :>> ', socket.id);
+          socket.on('hello', (data) => {
+            console.log('data :>> ', data);
+          })
+          socket.emit('hello', JSON.stringify({ room: socket.id }))
+        })
       });
   }
 
@@ -42,9 +50,9 @@ class App {
       server.on("listening", () => {
         const PORT = server.address().port;
         console.log("4. server started on:", `http://localhost:${PORT}/api/v1`);
-        resolve(server);
       });
       server.listen(port);
+      resolve(server);
     });
 
   dbConfiguration = async (app) => {

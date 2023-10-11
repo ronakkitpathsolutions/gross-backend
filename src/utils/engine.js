@@ -1,5 +1,7 @@
+import { Server } from "socket.io";
+
 class Engine {
-  loading = () =>
+  start = () =>
     new Promise((resolve) => {
       Object.assign(Array.prototype, {
         countWhen(predicate) {
@@ -35,6 +37,15 @@ class Engine {
 
       resolve();
     });
+
+  exhaust = (httpServer) => {
+    const io = new Server(httpServer, {
+      cors: {
+        origin: '*'
+      }
+    });
+    return io
+  }
 }
 
 export default new Engine();

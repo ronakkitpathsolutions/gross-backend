@@ -7,7 +7,7 @@ class JWT {
     dotenv.config();
   }
 
-  generateNewToken = async (payload, schedule = 60) => {
+  generateNewToken = async (payload, schedule = 90) => {
     const token = await new Promise((resolve, reject) => {
       jwt.sign(
         { ...payload, exp: Math.floor(Date.now() / 1000) + schedule * 60 },

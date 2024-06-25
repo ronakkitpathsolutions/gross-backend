@@ -13,8 +13,8 @@
   ],
   "functions": {
       "api/*.js": {
-            "memory": 3009,
-            "maxDuration": 60
+          "memory": 3009,
+          "maxDuration": 60
     }
   }
 }

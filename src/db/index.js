@@ -1,20 +1,14 @@
-import mongoose from 'mongoose'
-import dotenv from 'dotenv'
-
-const options = {
-	useNewUrlParser: true,
-	useUnifiedTopology: true,
-	serverSelectionTimeoutMS: 10 * 1000 // 1s timeout
-}
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 class Database {
-    constructor() {
-		dotenv.config()
-	}
-    connection = async () => {
-		const db = await mongoose.connect(process.env.MONGO_CONNECT, options)
-		return db
-	}
+  constructor() {
+    dotenv.config();
+  }
+  connection = async () => {
+    const db = await mongoose.connect(process.env.MONGO_CONNECT);
+    return db;
+  };
 }
 
-export default new Database()
+export default new Database();

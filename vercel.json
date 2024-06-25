@@ -12,7 +12,7 @@
     }
   ],
    "functions": {
-     "./**/*.js": {
+     "src/**/*.js": {
       "maxDuration": 30
     }
   }
